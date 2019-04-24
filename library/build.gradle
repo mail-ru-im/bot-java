@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.mail.im'
+version '1.0.0'
+
+sourceCompatibility = versions.javaVersion
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile "junit:junit:${versions.junit}"
+}

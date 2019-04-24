@@ -1,2 +1,4 @@
 rootProject.name = 'botapi-client'
 
+include 'library'
+include 'sample'
