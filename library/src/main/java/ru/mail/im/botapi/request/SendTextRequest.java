@@ -1,17 +1,13 @@
 package ru.mail.im.botapi.request;
 
-import ru.mail.im.botapi.response.MessageResponse;
+public class SendTextRequest extends AbstractMessageRequest {
 
-public class SendTextRequest extends GeneralRequest<MessageResponse> {
-
-    private SendTextRequest() {
-        super("messages/sendText", MessageResponse.class);
+    private SendTextRequest(final String chatId, final String text) {
+        super("messages/sendText", chatId);
+        addParam("text", text);
     }
 
     public static SendTextRequest simple(final String chatId, final String text) {
-        final SendTextRequest request = new SendTextRequest();
-        request.addParam("chatId", chatId);
-        request.addParam("text", text);
-        return request;
+        return new SendTextRequest(chatId, text);
     }
 }

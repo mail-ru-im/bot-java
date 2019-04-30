@@ -3,10 +3,10 @@ package ru.mail.im.botapi;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.request.GeneralRequest;
-import ru.mail.im.botapi.request.HttpRequestBuilder;
 import ru.mail.im.botapi.response.GeneralResponse;
 
 import javax.annotation.Nonnull;
@@ -39,16 +39,20 @@ public class BotApiClient {
     }
 
     public <Req extends GeneralRequest<Resp>, Resp extends GeneralResponse> Resp execute(final Req apiRequest) throws IOException {
-        final HttpUrl.Builder builder = baseUrl.newBuilder()
+        final HttpUrl.Builder urlBuilder = baseUrl.newBuilder()
                 .addQueryParameter("token", token);
 
-        apiRequest.prepare(new OkHttpRequestBuilder(builder));
+        apiRequest.buildUrl(urlBuilder);
 
-        final Request httpRequest = new Request.Builder()
-                .url(builder.build())
-                .build();
+        final Request.Builder requestBuilder = new Request.Builder()
+                .url(urlBuilder.build());
 
-        try (Response httpResponse = httpClient.newCall(httpRequest).execute()) {
+        final RequestBody requestBody = apiRequest.buildBody();
+        if (requestBody != null) {
+            requestBuilder.post(requestBody);
+        }
+
+        try (Response httpResponse = httpClient.newCall(requestBuilder.build()).execute()) {
             if (!httpResponse.isSuccessful()) {
                 throw new IOException("Bad HTTP status " + httpResponse.code());
             }
@@ -68,22 +72,4 @@ public class BotApiClient {
         // TODO
     }
 
-    private static class OkHttpRequestBuilder implements HttpRequestBuilder {
-
-        final HttpUrl.Builder builder;
-
-        private OkHttpRequestBuilder(final HttpUrl.Builder builder) {
-            this.builder = builder;
-        }
-
-        @Override
-        public void addPath(final String path) {
-            builder.addPathSegment(path);
-        }
-
-        @Override
-        public void addQueryParam(final String name, final Object value) {
-            builder.addQueryParameter(name, value == null ? null : value.toString());
-        }
-    }
 }

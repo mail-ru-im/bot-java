@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import ru.mail.im.botapi.BotApiClient;
 import ru.mail.im.botapi.request.GeneralRequest;
 import ru.mail.im.botapi.request.SelfGetRequest;
+import ru.mail.im.botapi.request.SendFileRequest;
 import ru.mail.im.botapi.request.SendTextRequest;
 import ru.mail.im.botapi.response.GeneralResponse;
 import ru.mail.im.botapi.sample.command.CommandListener;
@@ -46,7 +47,7 @@ public class AppCommandListener implements CommandListener {
 
     @Override
     public void onSendFile(final String chatId, final File file) {
-        System.out.format("Send file '%s' to chat %s%n", file, chatId);
+        execute(SendFileRequest.simple(chatId, file));
     }
 
     @Override
