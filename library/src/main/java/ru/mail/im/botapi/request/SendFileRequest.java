@@ -1,7 +1,6 @@
 package ru.mail.im.botapi.request;
 
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
+import ru.mail.im.botapi.MultipartFormDataBuilder;
 import ru.mail.im.botapi.response.MessageResponse;
 
 import java.io.File;
@@ -18,10 +17,9 @@ public class SendFileRequest extends PostRequest<MessageResponse> {
     }
 
     @Override
-    public void fillBody(final MultipartBody.Builder builder) throws IOException {
-        super.fillBody(builder);
-        builder.addFormDataPart("file", file.getName(),
-                RequestBody.create(null, readFileContent(file)));
+    public void buildBody(final MultipartFormDataBuilder builder) throws IOException {
+        super.buildBody(builder);
+        builder.addPart("file", file.getName(), readFileContent(file));
     }
 
     private static byte[] readFileContent(final File file) throws IOException {

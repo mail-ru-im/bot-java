@@ -4,6 +4,7 @@ import okhttp3.HttpUrl;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.request.ApiRequest;
@@ -12,6 +13,7 @@ import ru.mail.im.botapi.request.PostRequest;
 import ru.mail.im.botapi.response.ApiResponse;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -66,7 +68,7 @@ public class BotApiClient {
         final HttpUrl.Builder urlBuilder = baseUrl.newBuilder()
                 .addPathSegment(apiRequest.getName())
                 .addQueryParameter("token", token);
-        apiRequest.fillQueryString(urlBuilder);
+        apiRequest.buildQueryString(new OkHttpQueryStringBuilder(urlBuilder));
         return new Request.Builder()
                 .url(urlBuilder.build())
                 .build();
@@ -79,7 +81,7 @@ public class BotApiClient {
         final MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("token", token);
-        apiRequest.fillBody(builder);
+        apiRequest.buildBody(new OkHttpMultipartFormDataBuilder(builder));
         return new Request.Builder()
                 .url(url)
                 .post(builder.build())
@@ -94,4 +96,38 @@ public class BotApiClient {
         // TODO
     }
 
+    private static class OkHttpQueryStringBuilder implements QueryStringBuilder {
+
+        private final HttpUrl.Builder urlBuilder;
+
+        private OkHttpQueryStringBuilder(final HttpUrl.Builder urlBuilder) {
+            this.urlBuilder = urlBuilder;
+        }
+
+        @Override
+        public void addQueryParameter(final String name, @Nullable final Object value) {
+            urlBuilder.addQueryParameter(name, value == null ? null : value.toString());
+        }
+    }
+
+    private static class OkHttpMultipartFormDataBuilder implements MultipartFormDataBuilder {
+
+        private final MultipartBody.Builder builder;
+
+        private OkHttpMultipartFormDataBuilder(final MultipartBody.Builder builder) {
+            this.builder = builder;
+        }
+
+        @Override
+        public void addPart(final String name, @Nullable final Object value) {
+            if (value != null) {
+                builder.addFormDataPart(name, value.toString());
+            }
+        }
+
+        @Override
+        public void addPart(final String name, final String filename, final byte[] content) {
+            builder.addFormDataPart(name, filename, RequestBody.create(null, content));
+        }
+    }
 }
