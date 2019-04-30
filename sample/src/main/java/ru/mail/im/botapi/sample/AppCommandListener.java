@@ -51,6 +51,11 @@ public class AppCommandListener implements CommandListener {
     }
 
     @Override
+    public void onSendFile(final String chatId, final File file, final String caption) {
+        execute(SendFileRequest.withCaption(chatId, file, caption));
+    }
+
+    @Override
     public void onSendVoice(final String chatId, final File file) {
         System.out.format("Send voice '%s' to chat %s%n", file, chatId);
     }

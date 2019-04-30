@@ -13,5 +13,7 @@ public interface CommandListener {
 
     void onSendFile(String chatId, File file);
 
+    void onSendFile(String chatId, File file, String caption);
+
     void onSendVoice(String chatId, File file);
 }
