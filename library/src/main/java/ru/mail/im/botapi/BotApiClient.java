@@ -6,11 +6,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.request.GeneralRequest;
+import ru.mail.im.botapi.request.HttpRequestBuilder;
 import ru.mail.im.botapi.response.GeneralResponse;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotApiClient {
@@ -40,12 +40,9 @@ public class BotApiClient {
 
     public <Req extends GeneralRequest<Resp>, Resp extends GeneralResponse> Resp execute(final Req apiRequest) throws IOException {
         final HttpUrl.Builder builder = baseUrl.newBuilder()
-                .addPathSegment(apiRequest.getName())
                 .addQueryParameter("token", token);
 
-        for (Map.Entry<String, Object> entry : apiRequest.getParams().entrySet()) {
-            builder.addQueryParameter(entry.getKey(), entry.getValue() == null ? null : entry.getValue().toString());
-        }
+        apiRequest.prepare(new OkHttpRequestBuilder(builder));
 
         final Request httpRequest = new Request.Builder()
                 .url(builder.build())
@@ -69,5 +66,24 @@ public class BotApiClient {
 
     private void stopInternal() {
         // TODO
+    }
+
+    private static class OkHttpRequestBuilder implements HttpRequestBuilder {
+
+        final HttpUrl.Builder builder;
+
+        private OkHttpRequestBuilder(final HttpUrl.Builder builder) {
+            this.builder = builder;
+        }
+
+        @Override
+        public void addPath(final String path) {
+            builder.addPathSegment(path);
+        }
+
+        @Override
+        public void addQueryParam(final String name, final Object value) {
+            builder.addQueryParameter(name, value == null ? null : value.toString());
+        }
     }
 }
