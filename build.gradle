@@ -1,6 +1,9 @@
 buildscript {
     ext.versions = [
             'junit'      : '4.12',
+            'jsr305'     : '3.0.2',
+            'okhttp'     : '3.14.1',
+            'gson'       : '2.8.5',
             'javaVersion': JavaVersion.VERSION_1_8
     ]
 }

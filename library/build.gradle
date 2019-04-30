@@ -12,5 +12,9 @@ repositories {
 }
 
 dependencies {
+    compile "com.google.code.findbugs:jsr305:${versions.jsr305}"
+    compile "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+    compile "com.google.code.gson:gson:${versions.gson}"
+
     testCompile "junit:junit:${versions.junit}"
 }

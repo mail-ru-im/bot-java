@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class CommandProcessor {
@@ -30,9 +29,10 @@ public class CommandProcessor {
         }
     }
 
-    private void processCommand(final String command) {
+    private void processCommand(final String command) throws IOException {
         switch (command) {
             case "exit": {
+                listener.onExit();
                 running = false;
                 break;
             }
@@ -45,36 +45,34 @@ public class CommandProcessor {
                 break;
             }
             case "sendText": {
-                final String contact = input.next();
+                final String chatId = input.next();
                 final String text = getTextOrSingleWord();
-                listener.onSendText(contact, text);
+                listener.onSendText(chatId, text);
                 break;
             }
             case "sendFile": {
-                final String contact = input.next();
+                final String chatId = input.next();
                 final String fileName = getTextOrSingleWord();
-                listener.onSendFile(contact, new File(fileName));
+                listener.onSendFile(chatId, new File(fileName));
                 break;
             }
             case "sendVoice": {
-                final String contact = input.next();
+                final String chatId = input.next();
                 final String fileName = getTextOrSingleWord();
-                listener.onSendVoice(contact, new File(fileName));
+                listener.onSendVoice(chatId, new File(fileName));
                 break;
             }
         }
         skipInputToLineEnd();
+        print("OK");
     }
 
     private String getTextOrSingleWord() {
-        if (input.hasNext("\".*\"")) {
-            final String text = input.findInLine("\".*\"");
+        final String text = input.findInLine("\".*\"");
+        if (text != null) {
             return text.substring(1, text.length() - 1);
         }
-        if (input.hasNext()) {
-            return input.next();
-        }
-        throw new NoSuchElementException();
+        return input.next();
     }
 
     private void skipInputToLineEnd() {
