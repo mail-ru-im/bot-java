@@ -3,11 +3,11 @@ package ru.mail.im.botapi.sample;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ru.mail.im.botapi.BotApiClient;
-import ru.mail.im.botapi.request.GeneralRequest;
+import ru.mail.im.botapi.request.ApiRequest;
 import ru.mail.im.botapi.request.SelfGetRequest;
 import ru.mail.im.botapi.request.SendFileRequest;
 import ru.mail.im.botapi.request.SendTextRequest;
-import ru.mail.im.botapi.response.GeneralResponse;
+import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.sample.command.CommandListener;
 
 import javax.annotation.Nullable;
@@ -60,7 +60,7 @@ public class AppCommandListener implements CommandListener {
         System.out.format("Send voice '%s' to chat %s%n", file, chatId);
     }
 
-    private <T extends GeneralResponse> void execute(final GeneralRequest<T> request) {
+    private <T extends ApiResponse> void execute(final ApiRequest<T> request) {
         if (client != null) {
             try {
                 printResponse(client.execute(request));
@@ -72,7 +72,7 @@ public class AppCommandListener implements CommandListener {
         }
     }
 
-    private void printResponse(final GeneralResponse response) {
+    private void printResponse(final ApiResponse response) {
         System.out.println(gson.toJson(response));
     }
 }

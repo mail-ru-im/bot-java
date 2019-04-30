@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Collections;
 import java.util.List;
 
-public class SelfGetResponse extends GeneralResponse {
+public class SelfGetResponse extends ApiResponse {
 
     @SerializedName("userId")
     private String userId;
