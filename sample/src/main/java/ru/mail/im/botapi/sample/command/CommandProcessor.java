@@ -18,14 +18,14 @@ public class CommandProcessor {
 
     private final Scanner input;
     private final Writer output;
-    private final CommandListener listener;
+    private final CommandHandler handler;
 
     private boolean running;
 
-    public CommandProcessor(final InputStream input, final OutputStream output, final CommandListener listener) {
+    public CommandProcessor(final InputStream input, final OutputStream output, final CommandHandler handler) {
         this.input = new Scanner(input);
         this.output = new OutputStreamWriter(output);
-        this.listener = listener;
+        this.handler = handler;
     }
 
     public void start() throws IOException {
@@ -44,48 +44,48 @@ public class CommandProcessor {
         final Map<String, String> params = readParams();
         switch (command) {
             case "exit": {
-                listener.onExit();
+                handler.onExit();
                 running = false;
                 break;
             }
             case "start": {
-                listener.onStart(params.get("token"));
+                handler.onStart(params.get("token"));
                 break;
             }
             case "self": {
-                listener.onSelf();
+                handler.onSelf();
                 break;
             }
             case "send": {
                 final String chatId = params.get("to");
                 if (params.containsKey("text")) {
-                    listener.onSendText(chatId, params.get("text"));
+                    handler.onSendText(chatId, params.get("text"));
                 } else if (params.containsKey("file")) {
                     if (params.containsKey("caption")) {
-                        listener.onSendFile(chatId, new File(params.get("file")), params.get("caption"));
+                        handler.onSendFile(chatId, new File(params.get("file")), params.get("caption"));
                     } else {
-                        listener.onSendFile(chatId, new File(params.get("file")));
+                        handler.onSendFile(chatId, new File(params.get("file")));
                     }
                 } else if (params.containsKey("voice")) {
-                    listener.onSendVoice(chatId, new File(params.get("voice")));
+                    handler.onSendVoice(chatId, new File(params.get("voice")));
                 }
                 break;
             }
             case "edit": {
-                listener.onEditText(params.get("chat"), Long.parseLong(params.get("msg")), params.get("text"));
+                handler.onEditText(params.get("chat"), Long.parseLong(params.get("msg")), params.get("text"));
                 break;
             }
             case "delMsg": {
                 final String chatId = params.get("chat");
                 if (params.containsKey("msg")) {
-                    listener.onDelete(chatId, Long.parseLong(params.get("msg")));
+                    handler.onDelete(chatId, Long.parseLong(params.get("msg")));
                 } else if (params.containsKey("msgs")) {
                     final String[] list = params.get("msgs").split(",");
                     final long[] ids = new long[list.length];
                     for (int i = 0; i < list.length; i++) {
                         ids[i] = Long.parseLong(list[i]);
                     }
-                    listener.onDelete(chatId, ids);
+                    handler.onDelete(chatId, ids);
                 }
 
             }

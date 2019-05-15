@@ -12,7 +12,7 @@ public class Main {
         if (args.length == 1) {
             in = new FileInputStream(args[0]);
         }
-        final CommandProcessor parser = new CommandProcessor(in, System.out, new AppCommandListener());
+        final CommandProcessor parser = new CommandProcessor(in, System.out, new AppCommandHandler());
         parser.start();
     }
 }

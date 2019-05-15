@@ -2,7 +2,7 @@ package ru.mail.im.botapi.sample.command;
 
 import java.io.File;
 
-public interface CommandListener {
+public interface CommandHandler {
     void onStart(String token);
 
     void onExit();

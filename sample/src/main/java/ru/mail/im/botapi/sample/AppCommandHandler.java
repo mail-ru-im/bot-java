@@ -10,13 +10,13 @@ import ru.mail.im.botapi.request.SelfGetRequest;
 import ru.mail.im.botapi.request.SendFileRequest;
 import ru.mail.im.botapi.request.SendTextRequest;
 import ru.mail.im.botapi.response.ApiResponse;
-import ru.mail.im.botapi.sample.command.CommandListener;
+import ru.mail.im.botapi.sample.command.CommandHandler;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-public class AppCommandListener implements CommandListener {
+public class AppCommandHandler implements CommandHandler {
 
     private final Gson gson = new GsonBuilder().create();
 
