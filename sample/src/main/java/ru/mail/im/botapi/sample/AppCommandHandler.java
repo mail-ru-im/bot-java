@@ -1,7 +1,5 @@
 package ru.mail.im.botapi.sample;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import ru.mail.im.botapi.BotApiClient;
 import ru.mail.im.botapi.request.ApiRequest;
 import ru.mail.im.botapi.request.DeleteMessageRequest;
@@ -15,13 +13,19 @@ import ru.mail.im.botapi.sample.command.CommandHandler;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AppCommandHandler implements CommandHandler {
-
-    private final Gson gson = new GsonBuilder().create();
+class AppCommandHandler implements CommandHandler {
 
     @Nullable
     private BotApiClient client;
+
+    private final List<OnRequestExecuteListener> requestExecuteListeners = new ArrayList<>();
+
+    void addOnRequestExecuteListener(final OnRequestExecuteListener listener) {
+        requestExecuteListeners.add(listener);
+    }
 
     @Override
     public void onStart(final String token) {
@@ -80,7 +84,7 @@ public class AppCommandHandler implements CommandHandler {
     private <T extends ApiResponse> void execute(final ApiRequest<T> request) {
         if (client != null) {
             try {
-                printResponse(client.execute(request));
+                invokeListeners(client.execute(request));
             } catch (IOException ex) {
                 System.err.println("Fail to execute API method: " + ex.getMessage());
             }
@@ -89,7 +93,9 @@ public class AppCommandHandler implements CommandHandler {
         }
     }
 
-    private void printResponse(final ApiResponse response) {
-        System.out.println(gson.toJson(response));
+    private void invokeListeners(final ApiResponse response) {
+        for (OnRequestExecuteListener listener : requestExecuteListeners) {
+            listener.onRequestExecute(response);
+        }
     }
 }

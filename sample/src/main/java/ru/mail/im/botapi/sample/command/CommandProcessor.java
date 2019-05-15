@@ -15,17 +15,23 @@ import java.util.regex.Pattern;
 public class CommandProcessor {
 
     private final Pattern paramsPattern = Pattern.compile("(\\w+)\\s*=\\s*\"([^\"]*)\"");
+    private final Pattern placeholderPattern = Pattern.compile("\\$\\{([^}]*)}");
 
     private final Scanner input;
     private final Writer output;
     private final CommandHandler handler;
 
     private boolean running;
+    private PlaceholderValueProvider placeholderValueProvider;
 
     public CommandProcessor(final InputStream input, final OutputStream output, final CommandHandler handler) {
         this.input = new Scanner(input);
         this.output = new OutputStreamWriter(output);
         this.handler = handler;
+    }
+
+    public void setPlaceholderValueProvider(final PlaceholderValueProvider placeholderValueProvider) {
+        this.placeholderValueProvider = placeholderValueProvider;
     }
 
     public void start() throws IOException {
@@ -87,7 +93,7 @@ public class CommandProcessor {
                     }
                     handler.onDelete(chatId, ids);
                 }
-
+                break;
             }
         }
         print("OK");
@@ -98,9 +104,17 @@ public class CommandProcessor {
         final Matcher matcher = paramsPattern.matcher(text);
         final Map<String, String> params = new HashMap<>();
         while (matcher.find()) {
-            params.put(matcher.group(1), matcher.group(2));
+            params.put(matcher.group(1), replacePlaceholders(matcher.group(2)));
         }
         return params;
+    }
+
+    private String replacePlaceholders(String value) {
+        final Matcher matcher = placeholderPattern.matcher(value);
+        while (matcher.find()) {
+            value = value.replace(matcher.group(0), placeholderValueProvider.provide(matcher.group(1)));
+        }
+        return value;
     }
 
     private void skipInputToLineEnd() {

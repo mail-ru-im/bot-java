@@ -12,7 +12,15 @@ public class Main {
         if (args.length == 1) {
             in = new FileInputStream(args[0]);
         }
-        final CommandProcessor parser = new CommandProcessor(in, System.out, new AppCommandHandler());
+
+        final PlaceholderValueProviderImpl placeholderValueProvider = new PlaceholderValueProviderImpl();
+
+        final AppCommandHandler appCommandHandler = new AppCommandHandler();
+        appCommandHandler.addOnRequestExecuteListener(placeholderValueProvider);
+        appCommandHandler.addOnRequestExecuteListener(new ResponsePrinter());
+
+        final CommandProcessor parser = new CommandProcessor(in, System.out, appCommandHandler);
+        parser.setPlaceholderValueProvider(placeholderValueProvider);
         parser.start();
     }
 }
