@@ -18,4 +18,8 @@ public interface CommandListener {
     void onSendVoice(String chatId, File file);
 
     void onEditText(String chatId, long msgId, String newText);
+
+    void onDelete(String chatId, long msgId);
+
+    void onDelete(String chatId, long[] msgIds);
 }

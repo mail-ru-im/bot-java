@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ru.mail.im.botapi.BotApiClient;
 import ru.mail.im.botapi.request.ApiRequest;
+import ru.mail.im.botapi.request.DeleteMessageRequest;
 import ru.mail.im.botapi.request.EditTextRequest;
 import ru.mail.im.botapi.request.SelfGetRequest;
 import ru.mail.im.botapi.request.SendFileRequest;
@@ -64,6 +65,16 @@ public class AppCommandListener implements CommandListener {
     @Override
     public void onEditText(final String chatId, final long msgId, final String newText) {
         execute(EditTextRequest.create(chatId, msgId, newText));
+    }
+
+    @Override
+    public void onDelete(final String chatId, final long msgId) {
+        execute(DeleteMessageRequest.create(chatId, msgId));
+    }
+
+    @Override
+    public void onDelete(final String chatId, final long[] msgIds) {
+        execute(DeleteMessageRequest.create(chatId, msgIds));
     }
 
     private <T extends ApiResponse> void execute(final ApiRequest<T> request) {

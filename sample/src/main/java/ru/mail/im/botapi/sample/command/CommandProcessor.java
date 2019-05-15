@@ -75,6 +75,20 @@ public class CommandProcessor {
                 listener.onEditText(params.get("chat"), Long.parseLong(params.get("msg")), params.get("text"));
                 break;
             }
+            case "delMsg": {
+                final String chatId = params.get("chat");
+                if (params.containsKey("msg")) {
+                    listener.onDelete(chatId, Long.parseLong(params.get("msg")));
+                } else if (params.containsKey("msgs")) {
+                    final String[] list = params.get("msgs").split(",");
+                    final long[] ids = new long[list.length];
+                    for (int i = 0; i < list.length; i++) {
+                        ids[i] = Long.parseLong(list[i]);
+                    }
+                    listener.onDelete(chatId, ids);
+                }
+
+            }
         }
         print("OK");
     }

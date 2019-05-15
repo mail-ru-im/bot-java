@@ -4,8 +4,8 @@ import ru.mail.im.botapi.GsonResponseParser;
 import ru.mail.im.botapi.ResponseParser;
 import ru.mail.im.botapi.response.ApiResponse;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ApiRequest<T extends ApiResponse> {
 
@@ -13,7 +13,7 @@ public abstract class ApiRequest<T extends ApiResponse> {
 
     private final Class<T> responseClass;
 
-    final Map<String, Object> params = new HashMap<>();
+    final List<QueryParameter> params = new ArrayList<>();
 
     ApiRequest(final String name, final Class<T> responseClass) {
         this.name = name;
@@ -29,6 +29,16 @@ public abstract class ApiRequest<T extends ApiResponse> {
     }
 
     void addParam(final String name, final Object value) {
-        params.put(name, value);
+        params.add(new QueryParameter(name, value));
+    }
+
+    static class QueryParameter {
+        final String key;
+        final Object value;
+
+        QueryParameter(final String key, final Object value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 }
