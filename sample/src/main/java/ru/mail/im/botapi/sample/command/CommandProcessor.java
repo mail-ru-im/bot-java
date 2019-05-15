@@ -71,6 +71,10 @@ public class CommandProcessor {
                 }
                 break;
             }
+            case "edit": {
+                listener.onEditText(params.get("chat"), Long.parseLong(params.get("msg")), params.get("text"));
+                break;
+            }
         }
         print("OK");
     }

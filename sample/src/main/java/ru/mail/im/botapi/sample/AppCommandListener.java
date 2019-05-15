@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ru.mail.im.botapi.BotApiClient;
 import ru.mail.im.botapi.request.ApiRequest;
+import ru.mail.im.botapi.request.EditTextRequest;
 import ru.mail.im.botapi.request.SelfGetRequest;
 import ru.mail.im.botapi.request.SendFileRequest;
 import ru.mail.im.botapi.request.SendTextRequest;
@@ -58,6 +59,11 @@ public class AppCommandListener implements CommandListener {
     @Override
     public void onSendVoice(final String chatId, final File file) {
         System.out.format("Send voice '%s' to chat %s%n", file, chatId);
+    }
+
+    @Override
+    public void onEditText(final String chatId, final long msgId, final String newText) {
+        execute(EditTextRequest.create(chatId, msgId, newText));
     }
 
     private <T extends ApiResponse> void execute(final ApiRequest<T> request) {

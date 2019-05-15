@@ -16,4 +16,6 @@ public interface CommandListener {
     void onSendFile(String chatId, File file, String caption);
 
     void onSendVoice(String chatId, File file);
+
+    void onEditText(String chatId, long msgId, String newText);
 }

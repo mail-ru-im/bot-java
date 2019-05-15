@@ -12,7 +12,7 @@ public class SendFileRequest extends PostRequest<MessageResponse> {
     private final File file;
 
     private SendFileRequest(final File file) {
-        super("/messages/sendFile", MessageResponse.class);
+        super("messages/sendFile", MessageResponse.class);
         this.file = file;
     }
 
