@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 public class MessageResponse extends ApiResponse {
 
     @SerializedName("msgId")
-    private String msgId;
+    private long msgId;
 
-    public String getMsgId() {
+    public long getMsgId() {
         return msgId;
     }
 }
