@@ -22,4 +22,6 @@ public interface CommandHandler {
     void onDelete(String chatId, long msgId);
 
     void onDelete(String chatId, long[] msgIds);
+
+    void onSleep(long ms);
 }

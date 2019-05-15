@@ -81,6 +81,16 @@ class AppCommandHandler implements CommandHandler {
         execute(DeleteMessageRequest.create(chatId, msgIds));
     }
 
+    @Override
+    public void onSleep(final long ms) {
+        try {
+            System.out.println("Sleep for " + ms + " ms");
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     private <T extends ApiResponse> void execute(final ApiRequest<T> request) {
         if (client != null) {
             try {

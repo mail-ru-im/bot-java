@@ -38,20 +38,29 @@ public class CommandProcessor {
         running = true;
         while (running) {
             printPrompt();
-            processCommand(input.next());
+            processInput(input.next());
         }
     }
 
-    private void processCommand(final String command) throws IOException {
+    private void processInput(final String command) throws IOException {
         if (command.startsWith("#")) {
             skipInputToLineEnd();
-            return;
+        } else {
+            processCommand(command);
         }
+        print("OK");
+    }
+
+    private void processCommand(final String command) {
         final Map<String, String> params = readParams();
         switch (command) {
             case "exit": {
                 handler.onExit();
                 running = false;
+                break;
+            }
+            case "sleep": {
+                handler.onSleep(Long.parseLong(params.get("ms")));
                 break;
             }
             case "start": {
@@ -96,7 +105,6 @@ public class CommandProcessor {
                 break;
             }
         }
-        print("OK");
     }
 
     private Map<String, String> readParams() {
