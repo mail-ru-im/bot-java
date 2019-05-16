@@ -13,13 +13,9 @@ import okhttp3.ResponseBody;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -72,17 +68,9 @@ public class BotApiClient {
 
     private <T> T createImplementation(final Class<T> clazz) {
         Object impl = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-            GetRequest getAnnotation = method.getAnnotation(GetRequest.class);
-            if (getAnnotation != null) {
-                final Request request = buildGetRequest(getAnnotation.value(), buildQuery(method, args));
-                return execute(request, method.getReturnType());
-            }
-            PostRequest postAnnotation = method.getAnnotation(PostRequest.class);
-            if (postAnnotation != null) {
-                final Request request = buildPostRequest(postAnnotation.value(), buildQuery(method, args));
-                return execute(request, method.getReturnType());
-            }
-            throw new IllegalArgumentException("Request must be GET or POST");
+            final List<QueryParameter> query = new QueryBuilder(method, args).build();
+            final Request request = buildRequest(method, query);
+            return execute(request, method.getReturnType());
         });
         return clazz.cast(impl);
     }
@@ -98,6 +86,19 @@ public class BotApiClient {
             }
             return gson.fromJson(body.charStream(), responseClass);
         }
+    }
+
+    private Request buildRequest(final Method method, final List<QueryParameter> query) throws IOException {
+        GetRequest getAnnotation = method.getAnnotation(GetRequest.class);
+        if (getAnnotation != null) {
+            return buildGetRequest(getAnnotation.value(), query);
+        }
+
+        PostRequest postAnnotation = method.getAnnotation(PostRequest.class);
+        if (postAnnotation != null) {
+            return buildPostRequest(postAnnotation.value(), query);
+        }
+        throw new IllegalArgumentException("Request must be GET or POST");
     }
 
     private Request buildGetRequest(final String name, final List<QueryParameter> query) {
@@ -120,48 +121,16 @@ public class BotApiClient {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("token", token);
         for (QueryParameter parameter : query) {
-            if (parameter.value != null) {
-                if (parameter.value instanceof File) {
-                    File file = (File) parameter.value;
-                    builder.addFormDataPart(parameter.name, file.getName(), RequestBody.create(null, Files.readAllBytes(file.toPath())));
-                } else {
-                    builder.addFormDataPart(parameter.name, parameter.value.toString());
-                }
+            if (parameter.value instanceof File) {
+                File file = (File) parameter.value;
+                builder.addFormDataPart(parameter.name, file.getName(), RequestBody.create(null, Files.readAllBytes(file.toPath())));
+            } else if (parameter.value != null) {
+                builder.addFormDataPart(parameter.name, parameter.value.toString());
             }
         }
         return new Request.Builder()
                 .url(url)
                 .post(builder.build())
                 .build();
-    }
-
-    private static List<QueryParameter> buildQuery(final Method method, final Object[] args) {
-        if (args == null) {
-            return Collections.emptyList();
-        }
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
-        final List<QueryParameter> result = new ArrayList<>(args.length);
-        for (int i = 0; i < args.length; i++) {
-            boolean found = false;
-            for (Annotation annotation : paramAnnotations[i]) {
-                if (annotation instanceof RequestParam) {
-                    final String name = ((RequestParam) annotation).value();
-                    if (args[i].getClass().isArray()) {
-                        int length = Array.getLength(args[i]);
-                        for (int j = 0; j < length; j++) {
-                            result.add(new QueryParameter(name, Array.get(args[i], j)));
-                        }
-                    } else {
-                        result.add(new QueryParameter(name, args[i]));
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new IllegalArgumentException("Parameter with index " + i + " was not annotated with @RequestParam");
-            }
-        }
-        return result;
     }
 }
