@@ -1,12 +1,6 @@
 package ru.mail.im.botapi.sample;
 
 import ru.mail.im.botapi.BotApiClient;
-import ru.mail.im.botapi.request.ApiRequest;
-import ru.mail.im.botapi.request.DeleteMessageRequest;
-import ru.mail.im.botapi.request.EditTextRequest;
-import ru.mail.im.botapi.request.SelfGetRequest;
-import ru.mail.im.botapi.request.SendFileRequest;
-import ru.mail.im.botapi.request.SendTextRequest;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.sample.command.CommandHandler;
 
@@ -43,22 +37,22 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onSelf() {
-        execute(new SelfGetRequest());
+        withClient(client -> client.self().get());
     }
 
     @Override
     public void onSendText(final String chatId, final String text) {
-        execute(SendTextRequest.simple(chatId, text));
+        withClient(client -> client.messages().sendText(chatId, text));
     }
 
     @Override
     public void onSendFile(final String chatId, final File file) {
-        execute(SendFileRequest.simple(chatId, file));
+        withClient(client -> client.messages().sendFile(chatId, file));
     }
 
     @Override
     public void onSendFile(final String chatId, final File file, final String caption) {
-        execute(SendFileRequest.withCaption(chatId, file, caption));
+        withClient(client -> (client.messages().sendFile(chatId, file, caption)));
     }
 
     @Override
@@ -68,17 +62,17 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onEditText(final String chatId, final long msgId, final String newText) {
-        execute(EditTextRequest.create(chatId, msgId, newText));
+        withClient(client -> (client.messages().editText(chatId, msgId, newText)));
     }
 
     @Override
     public void onDelete(final String chatId, final long msgId) {
-        execute(DeleteMessageRequest.create(chatId, msgId));
+        withClient(client -> (client.messages().deleteMessages(chatId, msgId)));
     }
 
     @Override
     public void onDelete(final String chatId, final long[] msgIds) {
-        execute(DeleteMessageRequest.create(chatId, msgIds));
+        withClient(client -> (client.messages().deleteMessages(chatId, msgIds)));
     }
 
     @Override
@@ -91,15 +85,14 @@ class AppCommandHandler implements CommandHandler {
         }
     }
 
-    private <T extends ApiResponse> void execute(final ApiRequest<T> request) {
-        if (client != null) {
-            try {
-                invokeListeners(client.execute(request));
-            } catch (IOException ex) {
-                System.err.println("Fail to execute API method: " + ex.getMessage());
-            }
-        } else {
-            System.err.println("Client not started");
+    private <T extends ApiResponse> void withClient(ExecuteListener<T> listener) {
+        if (client == null) {
+            throw new IllegalStateException("Client not started");
+        }
+        try {
+            invokeListeners(listener.execute(client));
+        } catch (IOException e) {
+            System.err.println("Fail to execute request: " + e.getMessage());
         }
     }
 
@@ -107,5 +100,10 @@ class AppCommandHandler implements CommandHandler {
         for (OnRequestExecuteListener listener : requestExecuteListeners) {
             listener.onRequestExecute(response);
         }
+    }
+
+    @FunctionalInterface
+    private interface ExecuteListener<T extends ApiResponse> {
+        T execute(BotApiClient client) throws IOException;
     }
 }

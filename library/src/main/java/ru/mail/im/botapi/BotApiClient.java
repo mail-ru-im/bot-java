@@ -1,5 +1,7 @@
 package ru.mail.im.botapi;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import okhttp3.HttpUrl;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -7,14 +9,18 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import ru.mail.im.botapi.request.ApiRequest;
-import ru.mail.im.botapi.request.GetRequest;
-import ru.mail.im.botapi.request.PostRequest;
-import ru.mail.im.botapi.response.ApiResponse;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotApiClient {
@@ -24,6 +30,9 @@ public class BotApiClient {
     private final AtomicBoolean started = new AtomicBoolean();
 
     private OkHttpClient httpClient;
+    private Gson gson;
+    private Messages messages;
+    private Self self;
 
     public BotApiClient(@Nonnull String baseUrl, @Nonnull final String token) {
         this.baseUrl = HttpUrl.get(baseUrl);
@@ -42,92 +51,117 @@ public class BotApiClient {
         }
     }
 
-    public <Req extends ApiRequest<Resp>, Resp extends ApiResponse> Resp execute(final Req apiRequest) throws IOException {
-        final Request httpRequest;
-        if (apiRequest instanceof GetRequest<?>) {
-            httpRequest = buildGetRequest((GetRequest<?>) apiRequest);
-        } else if (apiRequest instanceof PostRequest<?>) {
-            httpRequest = buildPostRequest((PostRequest<?>) apiRequest);
-        } else {
-            throw new IllegalArgumentException("Request must be either POST or GET");
-        }
-
-        try (Response httpResponse = httpClient.newCall(httpRequest).execute()) {
-            if (!httpResponse.isSuccessful()) {
-                throw new IOException("Bad HTTP status " + httpResponse.code());
-            }
-            final ResponseBody body = httpResponse.body();
-            if (body == null) {
-                throw new NullPointerException("Response body is null");
-            }
-            return apiRequest.getResponseParser().parse(body.charStream());
-        }
+    public Messages messages() {
+        return messages;
     }
 
-    private Request buildGetRequest(final GetRequest<?> apiRequest) {
-        final HttpUrl.Builder urlBuilder = baseUrl.newBuilder()
-                .addPathSegment(apiRequest.getName())
-                .addQueryParameter("token", token);
-        apiRequest.buildQueryString(new OkHttpQueryStringBuilder(urlBuilder));
-        return new Request.Builder()
-                .url(urlBuilder.build())
-                .build();
-    }
-
-    private Request buildPostRequest(final PostRequest<?> apiRequest) throws IOException {
-        final HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(apiRequest.getName())
-                .build();
-        final MultipartBody.Builder builder = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("token", token);
-        apiRequest.buildBody(new OkHttpMultipartFormDataBuilder(builder));
-        return new Request.Builder()
-                .url(url)
-                .post(builder.build())
-                .build();
+    public Self self() {
+        return self;
     }
 
     private void startInternal() {
         httpClient = new OkHttpClient();
+        gson = new GsonBuilder().create();
+        messages = createImplementation(Messages.class);
+        self = createImplementation(Self.class);
     }
 
     private void stopInternal() {
         // TODO
     }
 
-    private static class OkHttpQueryStringBuilder implements QueryStringBuilder {
+    private <T> T createImplementation(final Class<T> clazz) {
+        Object impl = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
+            GetRequest getAnnotation = method.getAnnotation(GetRequest.class);
+            if (getAnnotation != null) {
+                final Request request = buildGetRequest(getAnnotation.value(), buildQuery(method, args));
+                return execute(request, method.getReturnType());
+            }
+            PostRequest postAnnotation = method.getAnnotation(PostRequest.class);
+            if (postAnnotation != null) {
+                final Request request = buildPostRequest(postAnnotation.value(), buildQuery(method, args));
+                return execute(request, method.getReturnType());
+            }
+            throw new IllegalArgumentException("Request must be GET or POST");
+        });
+        return clazz.cast(impl);
+    }
 
-        private final HttpUrl.Builder urlBuilder;
-
-        private OkHttpQueryStringBuilder(final HttpUrl.Builder urlBuilder) {
-            this.urlBuilder = urlBuilder;
-        }
-
-        @Override
-        public void addQueryParameter(final String name, @Nullable final Object value) {
-            urlBuilder.addQueryParameter(name, value == null ? null : value.toString());
+    private Object execute(final Request request, final Class<?> responseClass) throws IOException {
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Bad HTTP status " + response.code());
+            }
+            final ResponseBody body = response.body();
+            if (body == null) {
+                throw new NullPointerException("Response body is null");
+            }
+            return gson.fromJson(body.charStream(), responseClass);
         }
     }
 
-    private static class OkHttpMultipartFormDataBuilder implements MultipartFormDataBuilder {
-
-        private final MultipartBody.Builder builder;
-
-        private OkHttpMultipartFormDataBuilder(final MultipartBody.Builder builder) {
-            this.builder = builder;
+    private Request buildGetRequest(final String name, final List<QueryParameter> query) {
+        final HttpUrl.Builder urlBuilder = baseUrl.newBuilder()
+                .addPathSegment(name)
+                .addQueryParameter("token", token);
+        for (QueryParameter parameter : query) {
+            urlBuilder.addQueryParameter(parameter.name, parameter.getValueAsString());
         }
+        return new Request.Builder()
+                .url(urlBuilder.build())
+                .build();
+    }
 
-        @Override
-        public void addPart(final String name, @Nullable final Object value) {
-            if (value != null) {
-                builder.addFormDataPart(name, value.toString());
+    private Request buildPostRequest(final String name, final List<QueryParameter> query) throws IOException {
+        final HttpUrl url = baseUrl.newBuilder()
+                .addPathSegment(name)
+                .build();
+        final MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("token", token);
+        for (QueryParameter parameter : query) {
+            if (parameter.value != null) {
+                if (parameter.value instanceof File) {
+                    File file = (File) parameter.value;
+                    builder.addFormDataPart(parameter.name, file.getName(), RequestBody.create(null, Files.readAllBytes(file.toPath())));
+                } else {
+                    builder.addFormDataPart(parameter.name, parameter.value.toString());
+                }
             }
         }
+        return new Request.Builder()
+                .url(url)
+                .post(builder.build())
+                .build();
+    }
 
-        @Override
-        public void addPart(final String name, final String filename, final byte[] content) {
-            builder.addFormDataPart(name, filename, RequestBody.create(null, content));
+    private static List<QueryParameter> buildQuery(final Method method, final Object[] args) {
+        if (args == null) {
+            return Collections.emptyList();
         }
+        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        final List<QueryParameter> result = new ArrayList<>(args.length);
+        for (int i = 0; i < args.length; i++) {
+            boolean found = false;
+            for (Annotation annotation : paramAnnotations[i]) {
+                if (annotation instanceof RequestParam) {
+                    final String name = ((RequestParam) annotation).value();
+                    if (args[i].getClass().isArray()) {
+                        int length = Array.getLength(args[i]);
+                        for (int j = 0; j < length; j++) {
+                            result.add(new QueryParameter(name, Array.get(args[i], j)));
+                        }
+                    } else {
+                        result.add(new QueryParameter(name, args[i]));
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new IllegalArgumentException("Parameter with index " + i + " was not annotated with @RequestParam");
+            }
+        }
+        return result;
     }
 }
