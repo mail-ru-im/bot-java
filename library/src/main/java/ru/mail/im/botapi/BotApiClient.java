@@ -89,6 +89,7 @@ public class BotApiClient {
     }
 
     private Request buildRequest(final Method method, final List<QueryParameter> query) throws IOException {
+        verifyMethod(method);
         GetRequest getAnnotation = method.getAnnotation(GetRequest.class);
         if (getAnnotation != null) {
             return buildGetRequest(getAnnotation.value(), query);
@@ -132,5 +133,14 @@ public class BotApiClient {
                 .url(url)
                 .post(builder.build())
                 .build();
+    }
+
+    private static void verifyMethod(final Method method) {
+        for (Class<?> exClass : method.getExceptionTypes()) {
+            if (exClass == IOException.class) {
+                return;
+            }
+        }
+        throw new RuntimeException("Request method must throw IOException");
     }
 }
