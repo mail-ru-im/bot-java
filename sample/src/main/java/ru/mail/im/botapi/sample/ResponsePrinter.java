@@ -6,7 +6,9 @@ import ru.mail.im.botapi.response.ApiResponse;
 
 public class ResponsePrinter implements OnRequestExecuteListener {
 
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .create();
 
     @Override
     public void onRequestExecute(final ApiResponse response) {
