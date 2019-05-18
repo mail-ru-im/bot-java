@@ -27,8 +27,10 @@ public class BotApiClient {
 
     private OkHttpClient httpClient;
     private Gson gson;
+
     private Messages messages;
     private Self self;
+    private Chats chats;
 
     public BotApiClient(@Nonnull String baseUrl, @Nonnull final String token) {
         this.baseUrl = HttpUrl.get(baseUrl);
@@ -55,11 +57,16 @@ public class BotApiClient {
         return self;
     }
 
+    public Chats chats() {
+        return chats;
+    }
+
     private void startInternal() {
         httpClient = new OkHttpClient();
         gson = new GsonBuilder().create();
         messages = createImplementation(Messages.class);
         self = createImplementation(Self.class);
+        chats = createImplementation(Chats.class);
     }
 
     private void stopInternal() {

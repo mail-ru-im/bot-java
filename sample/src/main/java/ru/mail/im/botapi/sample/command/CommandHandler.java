@@ -1,5 +1,7 @@
 package ru.mail.im.botapi.sample.command;
 
+import ru.mail.im.botapi.ChatAction;
+
 import java.io.File;
 
 public interface CommandHandler {
@@ -24,4 +26,6 @@ public interface CommandHandler {
     void onDelete(String chatId, long[] msgIds);
 
     void onSleep(long ms);
+
+    void onChatAction(String chatId, ChatAction... actions);
 }

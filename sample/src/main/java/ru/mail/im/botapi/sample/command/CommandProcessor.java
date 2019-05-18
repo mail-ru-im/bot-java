@@ -1,5 +1,7 @@
 package ru.mail.im.botapi.sample.command;
 
+import ru.mail.im.botapi.ChatAction;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +103,22 @@ public class CommandProcessor {
                         ids[i] = Long.parseLong(list[i]);
                     }
                     handler.onDelete(chatId, ids);
+                }
+                break;
+            }
+            case "notify": {
+                final String chatId = params.get("chat");
+                if (params.containsKey("action")) {
+                    handler.onChatAction(chatId, ChatAction.valueOf(params.get("action")));
+                } else if (params.containsKey("actions")) {
+                    final String[] list = params.get("actions").split(",");
+                    final ChatAction[] actions = new ChatAction[list.length];
+                    for (int i = 0; i < list.length; i++) {
+                        actions[i] = ChatAction.valueOf(list[i]);
+                    }
+                    handler.onChatAction(chatId, actions);
+                } else {
+                    handler.onChatAction(chatId);
                 }
                 break;
             }

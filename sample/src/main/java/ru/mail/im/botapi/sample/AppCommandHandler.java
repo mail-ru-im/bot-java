@@ -1,6 +1,7 @@
 package ru.mail.im.botapi.sample;
 
 import ru.mail.im.botapi.BotApiClient;
+import ru.mail.im.botapi.ChatAction;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.sample.command.CommandHandler;
 
@@ -52,7 +53,7 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onSendFile(final String chatId, final File file, final String caption) {
-        withClient(client -> (client.messages().sendFile(chatId, file, caption)));
+        withClient(client -> client.messages().sendFile(chatId, file, caption));
     }
 
     @Override
@@ -62,17 +63,17 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onEditText(final String chatId, final long msgId, final String newText) {
-        withClient(client -> (client.messages().editText(chatId, msgId, newText)));
+        withClient(client -> client.messages().editText(chatId, msgId, newText));
     }
 
     @Override
     public void onDelete(final String chatId, final long msgId) {
-        withClient(client -> (client.messages().deleteMessages(chatId, msgId)));
+        withClient(client -> client.messages().deleteMessages(chatId, msgId));
     }
 
     @Override
     public void onDelete(final String chatId, final long[] msgIds) {
-        withClient(client -> (client.messages().deleteMessages(chatId, msgIds)));
+        withClient(client -> client.messages().deleteMessages(chatId, msgIds));
     }
 
     @Override
@@ -83,6 +84,11 @@ class AppCommandHandler implements CommandHandler {
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    @Override
+    public void onChatAction(final String chatId, final ChatAction... actions) {
+        withClient(client -> client.chats().sendActions(chatId, actions));
     }
 
     private <T extends ApiResponse> void withClient(ExecuteListener<T> listener) {
