@@ -126,6 +126,10 @@ public class CommandProcessor {
                 handler.onGetChatInfo(params.get("chat"));
                 break;
             }
+            case "getAdmins": {
+                handler.onGetChatAdmins(params.get("chat"));
+                break;
+            }
         }
     }
 

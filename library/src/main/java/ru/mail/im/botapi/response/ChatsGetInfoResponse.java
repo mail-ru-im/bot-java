@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import ru.mail.im.botapi.entity.ChatType;
 import ru.mail.im.botapi.entity.Photo;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ChatsGetInfoResponse extends ApiResponse {
@@ -12,7 +13,7 @@ public class ChatsGetInfoResponse extends ApiResponse {
     private ChatType type;
 
     @SerializedName("photo")
-    private List<Photo> photos;
+    private List<Photo> photos = Collections.emptyList();
 
     @SerializedName("about")
     private String about;

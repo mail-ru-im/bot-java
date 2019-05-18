@@ -30,4 +30,6 @@ public interface CommandHandler {
     void onChatAction(String chatId, ChatAction... actions);
 
     void onGetChatInfo(String chatId);
+
+    void onGetChatAdmins(String chatId);
 }

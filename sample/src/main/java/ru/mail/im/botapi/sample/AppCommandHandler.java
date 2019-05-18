@@ -96,6 +96,11 @@ class AppCommandHandler implements CommandHandler {
         withClient(client -> client.chats().getInfo(chatId));
     }
 
+    @Override
+    public void onGetChatAdmins(final String chatId) {
+        withClient(client -> client.chats().getAdmins(chatId));
+    }
+
     private <T extends ApiResponse> void withClient(ExecuteListener<T> listener) {
         if (client == null) {
             throw new IllegalStateException("Client not started");
