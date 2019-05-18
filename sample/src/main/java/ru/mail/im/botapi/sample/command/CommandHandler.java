@@ -1,6 +1,6 @@
 package ru.mail.im.botapi.sample.command;
 
-import ru.mail.im.botapi.ChatAction;
+import ru.mail.im.botapi.entity.ChatAction;
 
 import java.io.File;
 
@@ -28,4 +28,6 @@ public interface CommandHandler {
     void onSleep(long ms);
 
     void onChatAction(String chatId, ChatAction... actions);
+
+    void onGetChatInfo(String chatId);
 }

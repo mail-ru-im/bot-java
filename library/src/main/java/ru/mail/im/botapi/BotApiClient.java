@@ -9,6 +9,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import ru.mail.im.botapi.entity.ChatType;
+import ru.mail.im.botapi.json.ChatTypeGsonDeserializer;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -63,7 +65,9 @@ public class BotApiClient {
 
     private void startInternal() {
         httpClient = new OkHttpClient();
-        gson = new GsonBuilder().create();
+        gson = new GsonBuilder()
+                .registerTypeAdapter(ChatType.class, new ChatTypeGsonDeserializer())
+                .create();
         messages = createImplementation(Messages.class);
         self = createImplementation(Self.class);
         chats = createImplementation(Chats.class);

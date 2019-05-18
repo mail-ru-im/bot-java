@@ -1,7 +1,7 @@
 package ru.mail.im.botapi.sample;
 
 import ru.mail.im.botapi.BotApiClient;
-import ru.mail.im.botapi.ChatAction;
+import ru.mail.im.botapi.entity.ChatAction;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.sample.command.CommandHandler;
 
@@ -89,6 +89,11 @@ class AppCommandHandler implements CommandHandler {
     @Override
     public void onChatAction(final String chatId, final ChatAction... actions) {
         withClient(client -> client.chats().sendActions(chatId, actions));
+    }
+
+    @Override
+    public void onGetChatInfo(final String chatId) {
+        withClient(client -> client.chats().getInfo(chatId));
     }
 
     private <T extends ApiResponse> void withClient(ExecuteListener<T> listener) {

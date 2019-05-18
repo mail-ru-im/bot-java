@@ -1,6 +1,6 @@
 package ru.mail.im.botapi.sample.command;
 
-import ru.mail.im.botapi.ChatAction;
+import ru.mail.im.botapi.entity.ChatAction;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,6 +120,10 @@ public class CommandProcessor {
                 } else {
                     handler.onChatAction(chatId);
                 }
+                break;
+            }
+            case "getInfo": {
+                handler.onGetChatInfo(params.get("chat"));
                 break;
             }
         }

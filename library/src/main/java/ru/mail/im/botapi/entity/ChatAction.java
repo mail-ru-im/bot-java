@@ -1,4 +1,4 @@
-package ru.mail.im.botapi;
+package ru.mail.im.botapi.entity;
 
 public enum ChatAction {
     LOOKING("looking"),
