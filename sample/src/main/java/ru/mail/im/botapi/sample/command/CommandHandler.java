@@ -32,4 +32,6 @@ public interface CommandHandler {
     void onGetChatInfo(String chatId);
 
     void onGetChatAdmins(String chatId);
+
+    void onFetch(File toFile);
 }

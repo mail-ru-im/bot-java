@@ -130,6 +130,11 @@ public class CommandProcessor {
                 handler.onGetChatAdmins(params.get("chat"));
                 break;
             }
+            case "fetch": {
+                final File to = new File(params.get("to"));
+                handler.onFetch(to);
+                break;
+            }
         }
     }
 

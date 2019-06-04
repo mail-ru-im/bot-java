@@ -4,9 +4,11 @@ import ru.mail.im.botapi.BotApiClient;
 import ru.mail.im.botapi.entity.ChatAction;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.sample.command.CommandHandler;
+import ru.mail.im.botapi.util.ListenerDescriptor;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,12 @@ class AppCommandHandler implements CommandHandler {
 
     @Nullable
     private BotApiClient client;
+
+    @Nullable
+    private ListenerDescriptor fetchListenerDescriptor;
+
+    @Nullable
+    private FileFetchWriter fetchWriter;
 
     private final List<OnRequestExecuteListener> requestExecuteListeners = new ArrayList<>();
 
@@ -34,26 +42,32 @@ class AppCommandHandler implements CommandHandler {
             client.stop();
             client = null;
         }
+        if (fetchListenerDescriptor != null) {
+            fetchListenerDescriptor.remove();
+        }
+        if (fetchWriter != null) {
+            fetchWriter.close();
+        }
     }
 
     @Override
     public void onSelf() {
-        withClient(client -> client.self().get());
+        api(client -> client.self().get());
     }
 
     @Override
     public void onSendText(final String chatId, final String text) {
-        withClient(client -> client.messages().sendText(chatId, text));
+        api(client -> client.messages().sendText(chatId, text));
     }
 
     @Override
     public void onSendFile(final String chatId, final File file) {
-        withClient(client -> client.messages().sendFile(chatId, file));
+        api(client -> client.messages().sendFile(chatId, file));
     }
 
     @Override
     public void onSendFile(final String chatId, final File file, final String caption) {
-        withClient(client -> client.messages().sendFile(chatId, file, caption));
+        api(client -> client.messages().sendFile(chatId, file, caption));
     }
 
     @Override
@@ -63,17 +77,17 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onEditText(final String chatId, final long msgId, final String newText) {
-        withClient(client -> client.messages().editText(chatId, msgId, newText));
+        api(client -> client.messages().editText(chatId, msgId, newText));
     }
 
     @Override
     public void onDelete(final String chatId, final long msgId) {
-        withClient(client -> client.messages().deleteMessages(chatId, msgId));
+        api(client -> client.messages().deleteMessages(chatId, msgId));
     }
 
     @Override
     public void onDelete(final String chatId, final long[] msgIds) {
-        withClient(client -> client.messages().deleteMessages(chatId, msgIds));
+        api(client -> client.messages().deleteMessages(chatId, msgIds));
     }
 
     @Override
@@ -88,28 +102,45 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onChatAction(final String chatId, final ChatAction... actions) {
-        withClient(client -> client.chats().sendActions(chatId, actions));
+        api(client -> client.chats().sendActions(chatId, actions));
     }
 
     @Override
     public void onGetChatInfo(final String chatId) {
-        withClient(client -> client.chats().getInfo(chatId));
+        api(client -> client.chats().getInfo(chatId));
     }
 
     @Override
     public void onGetChatAdmins(final String chatId) {
-        withClient(client -> client.chats().getAdmins(chatId));
+        api(client -> client.chats().getAdmins(chatId));
     }
 
-    private <T extends ApiResponse> void withClient(ExecuteListener<T> listener) {
+    @Override
+    public void onFetch(final File toFile) {
+        try {
+            fetchWriter = new FileFetchWriter(toFile);
+            internal(client -> fetchListenerDescriptor = client.addOnEventFetchListener(events -> fetchWriter.write(events)));
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private <T extends ApiResponse> void api(ApiOperation<T> operation) {
         if (client == null) {
             throw new IllegalStateException("Client not started");
         }
         try {
-            invokeListeners(listener.execute(client));
+            invokeListeners(operation.execute(client));
         } catch (IOException e) {
             System.err.println("Fail to execute request: " + e.getMessage());
         }
+    }
+
+    private void internal(InternalOperation operation) {
+        if (client == null) {
+            throw new IllegalStateException("Client not started");
+        }
+        operation.execute(client);
     }
 
     private void invokeListeners(final ApiResponse response) {
@@ -119,7 +150,12 @@ class AppCommandHandler implements CommandHandler {
     }
 
     @FunctionalInterface
-    private interface ExecuteListener<T extends ApiResponse> {
+    private interface ApiOperation<T extends ApiResponse> {
         T execute(BotApiClient client) throws IOException;
+    }
+
+    @FunctionalInterface
+    private interface InternalOperation {
+        void execute(BotApiClient client);
     }
 }

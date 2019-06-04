@@ -10,7 +10,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.entity.ChatType;
+import ru.mail.im.botapi.fetcher.Fetcher;
+import ru.mail.im.botapi.fetcher.OnEventFetchListener;
 import ru.mail.im.botapi.json.ChatTypeGsonDeserializer;
+import ru.mail.im.botapi.util.ListenerDescriptor;
+import ru.mail.im.botapi.util.ListenerList;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -26,9 +30,11 @@ public class BotApiClient {
     private final HttpUrl baseUrl;
     private final String token;
     private final AtomicBoolean started = new AtomicBoolean();
+    private final ListenerList<OnEventFetchListener> fetchListenerList = new ListenerList<>(OnEventFetchListener.class);
 
     private OkHttpClient httpClient;
     private Gson gson;
+    private Fetcher fetcher;
 
     private Messages messages;
     private Self self;
@@ -51,6 +57,10 @@ public class BotApiClient {
         }
     }
 
+    public ListenerDescriptor addOnEventFetchListener(final OnEventFetchListener listener) {
+        return fetchListenerList.add(listener);
+    }
+
     public Messages messages() {
         return messages;
     }
@@ -71,10 +81,13 @@ public class BotApiClient {
         messages = createImplementation(Messages.class);
         self = createImplementation(Self.class);
         chats = createImplementation(Chats.class);
+
+        fetcher = new Fetcher(httpClient, events -> fetchListenerList.asListener().onEventFetch(events));
+        fetcher.start("https://botapi.icq.net/fetchEvents?aimsid=" + token);
     }
 
     private void stopInternal() {
-        // TODO
+        fetcher.stop();
     }
 
     private <T> T createImplementation(final Class<T> clazz) {
