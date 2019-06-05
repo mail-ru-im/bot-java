@@ -1,4 +1,4 @@
-package ru.mail.im.botapi;
+package ru.mail.im.botapi.api;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

@@ -1,6 +1,10 @@
 package ru.mail.im.botapi;
 
 import okhttp3.OkHttpClient;
+import ru.mail.im.botapi.api.Api;
+import ru.mail.im.botapi.api.Chats;
+import ru.mail.im.botapi.api.Messages;
+import ru.mail.im.botapi.api.Self;
 import ru.mail.im.botapi.fetcher.Fetcher;
 import ru.mail.im.botapi.fetcher.OnEventFetchListener;
 import ru.mail.im.botapi.util.ListenerDescriptor;

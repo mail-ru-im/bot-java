@@ -1,4 +1,4 @@
-package ru.mail.im.botapi;
+package ru.mail.im.botapi.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,7 +20,7 @@ import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.util.List;
 
-class Api {
+public class Api {
 
     private final OkHttpClient httpClient;
     private final HttpUrl baseUrl;
@@ -31,7 +31,7 @@ class Api {
     private final Self self;
     private final Chats chats;
 
-    Api(@Nonnull final OkHttpClient httpClient, @Nonnull String baseUrl, @Nonnull final String token) {
+    public Api(@Nonnull final OkHttpClient httpClient, @Nonnull String baseUrl, @Nonnull final String token) {
         this.httpClient = httpClient;
         this.baseUrl = HttpUrl.get(baseUrl);
         this.token = token;
@@ -44,15 +44,15 @@ class Api {
         chats = createImplementation(Chats.class);
     }
 
-    Self self() {
+    public Self self() {
         return self;
     }
 
-    Messages messages() {
+    public Messages messages() {
         return messages;
     }
 
-    Chats chats() {
+    public Chats chats() {
         return chats;
     }
 
