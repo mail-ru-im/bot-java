@@ -2,22 +2,13 @@ package ru.mail.im.botapi.fetcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.fetcher.event.Event;
-import ru.mail.im.botapi.fetcher.event.ImEvent;
-import ru.mail.im.botapi.fetcher.event.UnsupportedEvent;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -104,30 +95,4 @@ public class Fetcher {
         }
     }
 
-    private static class EventDeserializer implements JsonDeserializer<Event> {
-
-        @Override
-        public Event deserialize(final JsonElement json,
-                                 final Type typeOfT,
-                                 final JsonDeserializationContext context) throws JsonParseException {
-            if (!json.isJsonObject()) {
-                return null;
-            }
-            JsonObject object = json.getAsJsonObject();
-            if (!object.has("type") || !object.get("type").isJsonPrimitive()) {
-                return null;
-            }
-            JsonPrimitive jsonType = object.getAsJsonPrimitive("type");
-            if (!jsonType.isString()) {
-                return null;
-            }
-
-            switch (jsonType.getAsString()) {
-                case "im":
-                    return context.deserialize(json, ImEvent.class);
-                default:
-                    return new UnsupportedEvent(jsonType.getAsString());
-            }
-        }
-    }
 }
