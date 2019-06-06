@@ -52,7 +52,7 @@ class ApiImplementationFactory {
 
     private Request buildGetRequest(final String name, final List<QueryParameter> query) {
         final HttpUrl.Builder urlBuilder = baseUrl.newBuilder()
-                .addPathSegment(name)
+                .addPathSegments(name)
                 .addQueryParameter("token", token);
         for (QueryParameter parameter : query) {
             urlBuilder.addQueryParameter(parameter.name, parameter.getValueAsString());
@@ -64,7 +64,7 @@ class ApiImplementationFactory {
 
     private Request buildPostRequest(final String name, final List<QueryParameter> query) throws IOException {
         final HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(name)
+                .addPathSegments(name)
                 .build();
         final MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
