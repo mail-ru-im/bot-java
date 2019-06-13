@@ -7,6 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.fetcher.event.Event;
+import ru.mail.im.botapi.util.IOBackoff;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,6 +25,12 @@ public class Fetcher {
 
     private final AtomicBoolean isRunning = new AtomicBoolean();
 
+    private final IOBackoff backoff = IOBackoff.newBuilder()
+            .startTime(100)
+            .maxTime(10_000)
+            .factor(2)
+            .build();
+
     public Fetcher(final OkHttpClient client, final OnEventFetchListener listener) {
         this.client = client;
         this.listener = listener;
@@ -37,11 +44,7 @@ public class Fetcher {
             new Thread(() -> {
                 nextUrl = startUrl;
                 while (isRunning.get()) {
-                    try {
-                        fetchNext();
-                    } catch (IOException e) {
-                        // TODO handle
-                    }
+                    backoff.execute(this::fetchNext);
                 }
             }).start();
         }
@@ -91,8 +94,7 @@ public class Fetcher {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
-            // TODO handle
+            Thread.currentThread().interrupt();
         }
     }
-
 }
