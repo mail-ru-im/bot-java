@@ -2,7 +2,7 @@ package ru.mail.im.botapi.response;
 
 import com.google.gson.annotations.SerializedName;
 
-// TODO add to ProGuard
+// TODO all fields in all GSON-parcelable classes are annotated with @SerializedName. Check that ProGuard keep that annotations.
 public class ApiResponse {
 
     @SerializedName("ok")

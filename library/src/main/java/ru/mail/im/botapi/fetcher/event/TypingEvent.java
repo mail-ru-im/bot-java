@@ -25,7 +25,7 @@ public class TypingEvent extends Event<TypingEvent.Data> {
         @SerializedName("aimId")
         private String aimId;
 
-        // TODO replace with enum
+        // TODO replace with Enum if the field will remains in new fetch protocol
         @SerializedName("typingStatus")
         private String status;
     }

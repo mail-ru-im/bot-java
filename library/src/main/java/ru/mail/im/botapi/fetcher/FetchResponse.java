@@ -6,7 +6,6 @@ import ru.mail.im.botapi.fetcher.event.Event;
 import java.util.Collections;
 import java.util.List;
 
-// TODO: ProGuard
 class FetchResponse {
 
     @SerializedName("response")

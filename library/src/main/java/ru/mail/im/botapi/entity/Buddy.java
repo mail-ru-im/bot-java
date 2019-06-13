@@ -10,7 +10,7 @@ public class Buddy {
     @SerializedName("friendly")
     private String name;
 
-    // TODO maybe enum?
+    // TODO replace with Enum if the field will remains in new fetch protocol
     @SerializedName("userType")
     private String userType;
 
