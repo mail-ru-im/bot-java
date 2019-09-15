@@ -2,12 +2,7 @@ package ru.mail.im.botapi.sample.command;
 
 import ru.mail.im.botapi.entity.ChatAction;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -23,6 +18,7 @@ public class CommandProcessor {
     private final Writer output;
     private final CommandHandler handler;
 
+    private final static String TEST_TOKEN = "001.0669424658.2704803218:748626377";
     private boolean running;
     private PlaceholderValueProvider placeholderValueProvider;
 
@@ -38,6 +34,7 @@ public class CommandProcessor {
 
     public void start() throws IOException {
         running = true;
+        handler.onStart(TEST_TOKEN);
         while (running) {
             printPrompt();
             processInput(input.next());

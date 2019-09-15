@@ -1,11 +1,6 @@
 package ru.mail.im.botapi.sample;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import ru.mail.im.botapi.entity.ChatType;
 import ru.mail.im.botapi.response.ApiResponse;
 

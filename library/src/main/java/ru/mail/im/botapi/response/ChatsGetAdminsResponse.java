@@ -14,4 +14,11 @@ public class ChatsGetAdminsResponse extends ApiResponse {
     public List<Admin> getAdmins() {
         return admins;
     }
+
+    @Override
+    public String toString() {
+        return "ChatsGetAdminsResponse{" +
+                "admins=" + admins +
+                '}';
+    }
 }

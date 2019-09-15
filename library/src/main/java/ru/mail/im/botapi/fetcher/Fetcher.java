@@ -7,15 +7,24 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.mail.im.botapi.fetcher.event.Event;
+import ru.mail.im.botapi.fetcher.event.parts.Part;
 import ru.mail.im.botapi.util.IOBackoff;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Fetcher {
 
+    private String baseUrl;
+
     private String nextUrl;
+
+    private long pollTime;
+
+    private long lastEventId;
 
     private OnEventFetchListener listener;
 
@@ -31,27 +40,51 @@ public class Fetcher {
             .factor(2)
             .build();
 
-    public Fetcher(final OkHttpClient client, final OnEventFetchListener listener) {
-        this.client = client;
-        this.listener = listener;
+    private final ExecutorService executor;
+
+    public Fetcher(final OkHttpClient client,
+                   final OnEventFetchListener listener,
+                   final String baseUrl) {
+        this(client, listener, baseUrl, Executors.newSingleThreadExecutor());
     }
 
-    public void start(final String startUrl) {
+    public Fetcher(final OkHttpClient client,
+                   final OnEventFetchListener listener,
+                   final String baseUrl,
+                   final ExecutorService executor) {
+        this.client = client;
+        this.listener = listener;
+        this.baseUrl = baseUrl;
+        this.executor = executor;
+    }
+
+    public void start(final long lastEventId, final long pollTime) {
+        this.lastEventId = lastEventId;
+        this.pollTime = pollTime;
+
         if (isRunning.compareAndSet(false, true)) {
             gson = new GsonBuilder()
                     .registerTypeAdapter(Event.class, new EventDeserializer())
+                    .registerTypeAdapter(Part.class, new PartDeserializer())
                     .create();
-            new Thread(() -> {
-                nextUrl = startUrl;
+            Thread thread = new Thread(() -> {
+                nextUrl = getNextUrl();
                 while (isRunning.get()) {
                     backoff.execute(this::fetchNext);
                 }
-            }).start();
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
+    }
+
+    private String getNextUrl() {
+        return String.format("%s&lastEventId=%d&pollTime=%d", baseUrl, lastEventId, pollTime);
     }
 
     public void stop() {
         isRunning.set(false);
+        executor.shutdown();
     }
 
     private void fetchNext() throws IOException {
@@ -66,7 +99,9 @@ public class Fetcher {
             if (body == null) {
                 throw new NullPointerException("Response body is null");
             }
-            final FetchResponse fetchResponse = gson.fromJson(body.charStream(), FetchResponse.class);
+            String json = body.string();
+            System.out.println("BODY STRING " + json);
+            final FetchResponse fetchResponse = gson.fromJson(json, FetchResponse.class);
             handleFetchResponse(fetchResponse);
         }
     }
@@ -74,27 +109,17 @@ public class Fetcher {
     private void handleFetchResponse(final FetchResponse fetchResponse) {
         handleEvents(fetchResponse.getEvents());
 
-        final String nextUrl = fetchResponse.getNextUrl();
-        if (nextUrl != null) {
-            this.nextUrl = nextUrl;
+        if (fetchResponse.getEvents() != null && !fetchResponse.getEvents().isEmpty()) {
+            int size = fetchResponse.getEvents().size();
+            lastEventId = fetchResponse.getEvents().get(size - 1).getEventId();
         }
 
-        if (fetchResponse.getTimeToNextFetch() > 0) {
-            sleep(fetchResponse.getTimeToNextFetch());
-        }
+        this.nextUrl = getNextUrl();
     }
 
     private void handleEvents(final List<Event> events) {
         if (isRunning.get()) {
             listener.onEventFetch(events);
-        }
-    }
-
-    private void sleep(final long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 }

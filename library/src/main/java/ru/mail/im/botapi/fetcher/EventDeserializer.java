@@ -1,18 +1,7 @@
 package ru.mail.im.botapi.fetcher;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import ru.mail.im.botapi.fetcher.event.BuddyListEvent;
-import ru.mail.im.botapi.fetcher.event.Event;
-import ru.mail.im.botapi.fetcher.event.ImEvent;
-import ru.mail.im.botapi.fetcher.event.MyInfoEvent;
-import ru.mail.im.botapi.fetcher.event.ServiceEvent;
-import ru.mail.im.botapi.fetcher.event.TypingEvent;
-import ru.mail.im.botapi.fetcher.event.UnknownEvent;
+import com.google.gson.*;
+import ru.mail.im.botapi.fetcher.event.*;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
@@ -24,16 +13,20 @@ class EventDeserializer implements JsonDeserializer<Event> {
                              final Type typeOfT,
                              final JsonDeserializationContext context) throws JsonParseException {
         switch (extractEventType(json)) {
-            case "im":
-                return context.deserialize(json, ImEvent.class);
-            case "myInfo":
-                return context.deserialize(json, MyInfoEvent.class);
-            case "typing":
-                return context.deserialize(json, TypingEvent.class);
-            case "buddylist":
-                return context.deserialize(json, BuddyListEvent.class);
-            case "service":
-                return context.deserialize(json, ServiceEvent.class);
+            case "newMessage":
+                return context.deserialize(json, NewMessageEvent.class);
+            case "editedMessage":
+                return context.deserialize(json, EditedMessageEvent.class);
+            case "deletedMessage":
+                return context.deserialize(json, DeletedMessageEvent.class);
+            case "pinnedMessage":
+                return context.deserialize(json, PinnedMessageEvent.class);
+            case "unpinnedMessage":
+                return context.deserialize(json, UnpinnedMessageEvent.class);
+            case "newChatMembers":
+                return context.deserialize(json, NewChatMembersEvent.class);
+            case "leftChatMembers":
+                return context.deserialize(json, LeftChatMembersEvent.class);
             default:
                 return new UnknownEvent(json.toString());
         }

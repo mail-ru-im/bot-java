@@ -4,26 +4,33 @@ import com.google.gson.annotations.SerializedName;
 
 public abstract class Event<T> {
 
-    @SerializedName("eventData")
+    @SerializedName("eventId")
+    long eventId;
+
+    @SerializedName("payload")
     T eventData;
 
-    @SerializedName("seqNum")
-    private long seqNum;
+    @SerializedName("type")
+    private String type;
 
     public abstract <IN, OUT> OUT accept(EventVisitor<IN, OUT> visitor, IN in);
 
-    public long getSeqNum() {
-        return seqNum;
-    }
-
-    <R> R withData(NonNullCall<R, T> call) {
+    public <R> R withData(NonNullCall<R, T> call) {
         if (eventData != null) {
             return call.call(eventData);
         }
         return null;
     }
 
-    interface NonNullCall<R, D> {
+    public interface NonNullCall<R, D> {
         R call(D data);
+    }
+
+    public long getEventId() {
+        return eventId;
+    }
+
+    public String getType() {
+        return type;
     }
 }

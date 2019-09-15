@@ -32,7 +32,7 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onStart(final String token) {
-        client = new BotApiClient("https://u.icq.net/rapi/botapi", token);
+        client = new BotApiClient("https://u.icq.net/rapi/botapi", token, 0, 1500);
         client.start();
     }
 

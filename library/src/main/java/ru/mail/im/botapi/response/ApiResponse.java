@@ -11,4 +11,12 @@ public class ApiResponse {
     // optional, only if "ok" = false
     @SerializedName("description")
     private String description;
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" +
+                "ok=" + ok +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

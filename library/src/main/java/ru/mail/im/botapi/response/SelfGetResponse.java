@@ -48,4 +48,16 @@ public class SelfGetResponse extends ApiResponse {
     public List<String> getPhoto() {
         return photo;
     }
+
+    @Override
+    public String toString() {
+        return "SelfGetResponse{" +
+                "userId='" + userId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", nick='" + nick + '\'' +
+                ", about='" + about + '\'' +
+                ", photo=" + photo +
+                '}';
+    }
 }

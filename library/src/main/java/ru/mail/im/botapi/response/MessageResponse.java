@@ -10,4 +10,11 @@ public class MessageResponse extends ApiResponse {
     public long getMsgId() {
         return msgId;
     }
+
+    @Override
+    public String toString() {
+        return "MessageResponse{" +
+                "msgId=" + msgId +
+                '}';
+    }
 }

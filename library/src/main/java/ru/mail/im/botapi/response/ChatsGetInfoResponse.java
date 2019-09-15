@@ -104,4 +104,23 @@ public class ChatsGetInfoResponse extends ApiResponse {
     public String getRules() {
         return rules;
     }
+
+    @Override
+    public String toString() {
+        return "ChatsGetInfoResponse{" +
+                "type=" + type +
+                ", photos=" + photos +
+                ", about='" + about + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", nick='" + nick + '\'' +
+                ", isBot=" + isBot +
+                ", phone='" + phone + '\'' +
+                ", title='" + title + '\'' +
+                ", inviteLink='" + inviteLink + '\'' +
+                ", isPublic=" + isPublic +
+                ", hasJoinModeration=" + hasJoinModeration +
+                ", rules='" + rules + '\'' +
+                '}';
+    }
 }

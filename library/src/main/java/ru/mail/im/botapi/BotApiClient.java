@@ -15,17 +15,33 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotApiClient {
 
+    private static final String BOT_API_URL = "https://u.icq.net/rapi/botapi";
+
     private final String baseUrl;
     private final String token;
+    private final long lastEventId;
+    private final long pollTime;
+
     private final AtomicBoolean started = new AtomicBoolean();
     private final ListenerList<OnEventFetchListener> fetchListenerList = new ListenerList<>(OnEventFetchListener.class);
 
     private Fetcher fetcher;
     private Api api;
 
-    public BotApiClient(@Nonnull String baseUrl, @Nonnull final String token) {
+    public BotApiClient(@Nonnull String token) {
+        this(BOT_API_URL, token, 0, 60);
+    }
+
+    public BotApiClient(@Nonnull String token, long lastEventId, long pollTime) {
+        this(BOT_API_URL, token, lastEventId, pollTime);
+    }
+
+    public BotApiClient(@Nonnull String baseUrl, @Nonnull final String token,
+                        long lastEventId, long pollTime) {
         this.baseUrl = baseUrl;
         this.token = token;
+        this.lastEventId = lastEventId;
+        this.pollTime = pollTime;
     }
 
     public void start() {
@@ -60,8 +76,11 @@ public class BotApiClient {
         final OkHttpClient httpClient = new OkHttpClient();
         api = new Api(httpClient, baseUrl, token);
 
-        fetcher = new Fetcher(httpClient, events -> fetchListenerList.asListener().onEventFetch(events));
-        fetcher.start("https://botapi.icq.net/fetchEvents?aimsid=" + token);
+        fetcher = new Fetcher(httpClient,
+                events -> fetchListenerList.asListener().onEventFetch(events),
+                "https://api.icq.net/bot/v1/events/get?token=" + token
+        );
+        fetcher.start(lastEventId, pollTime);
     }
 
     private void stopInternal() {

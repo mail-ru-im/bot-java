@@ -1,14 +1,6 @@
 package ru.mail.im.botapi.sample;
 
-import ru.mail.im.botapi.entity.Buddy;
-import ru.mail.im.botapi.fetcher.event.BuddyListEvent;
-import ru.mail.im.botapi.fetcher.event.Event;
-import ru.mail.im.botapi.fetcher.event.EventVisitor;
-import ru.mail.im.botapi.fetcher.event.ImEvent;
-import ru.mail.im.botapi.fetcher.event.MyInfoEvent;
-import ru.mail.im.botapi.fetcher.event.ServiceEvent;
-import ru.mail.im.botapi.fetcher.event.TypingEvent;
-import ru.mail.im.botapi.fetcher.event.UnknownEvent;
+import ru.mail.im.botapi.fetcher.event.*;
 
 import java.io.Closeable;
 import java.io.File;
@@ -23,14 +15,6 @@ class FileFetchWriter implements Closeable {
     private final EventVisitor<PrintStream, Void> visitor = new EventVisitor<PrintStream, Void>() {
 
         @Override
-        public Void visitIm(final ImEvent event, final PrintStream stream) {
-            stream.format("# INPUT MESSAGE [%d]%n", event.getSeqNum());
-            stream.format("From: %s [%s]%n", event.getSenderName(), event.getSenderId());
-            stream.format("Text: %s%n", event.getText());
-            return null;
-        }
-
-        @Override
         public Void visitUnknown(final UnknownEvent event, final PrintStream stream) {
             stream.println("# UNKNOWN EVENT");
             stream.format("JSON: %s%n", event.getJson());
@@ -38,35 +22,68 @@ class FileFetchWriter implements Closeable {
         }
 
         @Override
-        public Void visitMyInfo(final MyInfoEvent event, final PrintStream stream) {
-            stream.format("# MY INFO [%d]%n", event.getSeqNum());
-            stream.format("SN  : %s%n", event.getId());
-            stream.format("Name: %s%n", event.getName());
-            stream.format("Nick: %s%n", event.getNick());
+        public Void visitNewMessage(NewMessageEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("From :%s%n", event.getFrom().getNick());
+            stream.format("Text :%s%n", event.getText());
+            stream.format("Time :%s%n", event.getTimestamp());
             return null;
         }
 
         @Override
-        public Void visitTyping(final TypingEvent event, final PrintStream stream) {
-            stream.format("# TYPING [%d]%n", event.getSeqNum());
-            stream.format("Who   : %s%n", event.getTypistId());
-            stream.format("Status: %s%n", event.getStatus());
+        public Void visitNewChatMembers(NewChatMembersEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("From :%s%n", event.getAddedBy().getNick());
+            stream.format("New members :%s%n", event.getMembers());
             return null;
         }
 
         @Override
-        public Void visitBuddyList(final BuddyListEvent event, final PrintStream stream) {
-            stream.format("# BUDDY LIST [%d]%n", event.getSeqNum());
-            for (int i = 0; i < event.getBuddies().size(); i++) {
-                final Buddy buddy = event.getBuddies().get(i);
-                stream.format("%d. %s [%s] - %s%n", i + 1, buddy.getName(), buddy.getId(), buddy.getUserType());
-            }
+        public Void visitLeftChatMembers(LeftChatMembersEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("From :%s%n", event.getRemovedBy().getNick());
+            stream.format("Left members :%s%n", event.getMembers());
             return null;
         }
 
         @Override
-        public Void visitService(final ServiceEvent event, final PrintStream stream) {
-            stream.format("# SERVICE [%d]%n", event.getSeqNum());
+        public Void visitDeletedMessage(DeletedMessageEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("MsgId :%s%n", event.getMessageId());
+            stream.format("Timestamp :%s%n", event.getTimestamp());
+            return null;
+        }
+
+        @Override
+        public Void visitEditedMessage(EditedMessageEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("Text :%s%n", event.getText());
+            stream.format("Timestamp :%s%n", event.getTimestamp());
+            stream.format("Edited timestamp :%s%n", event.getEditedTimestamp());
+            stream.format("User :%s%n", event.getFrom().getNick());
+            return null;
+        }
+
+        @Override
+        public Void visitPinnedMessage(PinnedMessageEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("Text :%s%n", event.getText());
+            stream.format("Timestamp :%s%n", event.getTimestamp());
+            stream.format("User :%s%n", event.getFrom().getNick());
+            return null;
+        }
+
+        @Override
+        public Void visitUnpinnedMessage(UnpinnedMessageEvent event, PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Chat :%s%n", event.getChat().getChatId());
+            stream.format("Timestamp :%s%n", event.getTimestamp());
             return null;
         }
     };
