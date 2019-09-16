@@ -18,7 +18,6 @@ public class CommandProcessor {
     private final Writer output;
     private final CommandHandler handler;
 
-    private final static String TEST_TOKEN = "001.0669424658.2704803218:748626377";
     private boolean running;
     private PlaceholderValueProvider placeholderValueProvider;
 
@@ -34,7 +33,9 @@ public class CommandProcessor {
 
     public void start() throws IOException {
         running = true;
-        handler.onStart(TEST_TOKEN);
+        print("Enter commands for bot matching (command param=\"value\" param2=\"value2\")");
+        print("For new bot print: start=\"token\"");
+        print("Note a bot can only reply after the user has added it to his contact list, or if the user was the first to start a dialogue.");
         while (running) {
             printPrompt();
             processInput(input.next());
