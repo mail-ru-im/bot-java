@@ -89,7 +89,6 @@ bintray {
     pkg {
         repo = 'bot-java'
         name = 'im-bot-java'
-        userOrg = 'Mail.Ru'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
         publicDownloadNumbers = false

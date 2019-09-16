@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     compile project(':library')
-    
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.28'
+
     testCompile "junit:junit:${versions.junit}"
 }

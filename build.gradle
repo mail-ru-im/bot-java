@@ -4,6 +4,7 @@ buildscript {
             'jsr305'     : '3.0.2',
             'okhttp'     : '3.14.1',
             'gson'       : '2.8.5',
+            'slf4j'      : '1.7.28',
             'javaVersion': JavaVersion.VERSION_1_8
     ]
 }

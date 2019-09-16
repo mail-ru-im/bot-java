@@ -47,12 +47,18 @@ public class BotApiClient {
     public void start() {
         if (started.compareAndSet(false, true)) {
             startInternal();
+            BotLogger.i("bot successfully started token:" + token);
+        } else {
+            BotLogger.i("bot already started token:" + token);
         }
     }
 
     public void stop() {
         if (started.compareAndSet(true, false)) {
             stopInternal();
+            BotLogger.i("bot successfully stopped");
+        } else {
+            BotLogger.i("bot is not running");
         }
     }
 

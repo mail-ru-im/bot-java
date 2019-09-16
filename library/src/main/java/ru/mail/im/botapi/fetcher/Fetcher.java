@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import ru.mail.im.botapi.BotLogger;
 import ru.mail.im.botapi.fetcher.event.Event;
 import ru.mail.im.botapi.fetcher.event.parts.Part;
 import ru.mail.im.botapi.util.IOBackoff;
@@ -67,14 +68,12 @@ public class Fetcher {
                     .registerTypeAdapter(Event.class, new EventDeserializer())
                     .registerTypeAdapter(Part.class, new PartDeserializer())
                     .create();
-            Thread thread = new Thread(() -> {
+            executor.execute(() -> {
                 nextUrl = getNextUrl();
                 while (isRunning.get()) {
                     backoff.execute(this::fetchNext);
                 }
             });
-            thread.setDaemon(true);
-            thread.start();
         }
     }
 
@@ -85,12 +84,14 @@ public class Fetcher {
     public void stop() {
         isRunning.set(false);
         executor.shutdown();
+        BotLogger.i("fetcher stopped");
     }
 
     private void fetchNext() throws IOException {
         final Request httpRequest = new Request.Builder()
                 .url(nextUrl)
                 .build();
+        BotLogger.i("fetch next url:" + nextUrl);
         try (Response httpResponse = client.newCall(httpRequest).execute()) {
             if (!httpResponse.isSuccessful()) {
                 throw new IOException("Bad HTTP status " + httpResponse.code());
@@ -100,9 +101,9 @@ public class Fetcher {
                 throw new NullPointerException("Response body is null");
             }
             String json = body.string();
-            System.out.println("BODY STRING " + json);
             final FetchResponse fetchResponse = gson.fromJson(json, FetchResponse.class);
             handleFetchResponse(fetchResponse);
+            BotLogger.i("new events fetched:" + json);
         }
     }
 
