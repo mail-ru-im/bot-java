@@ -69,7 +69,7 @@ publishing {
             artifact javadocJar {
                 classifier "javadoc"
             }
-            groupId 'ru.mail.im'
+            groupId 'io.github.mail-ru-im'
             artifactId 'bot-api'
             version '1.0'
             pom.withXml {
@@ -87,13 +87,19 @@ bintray {
     key = properties['bintray.key']
     publications = ['ApiPublication']
     pkg {
-        repo = 'bot-java'
-        name = 'im-bot-java'
+        repo = 'im-bot-api'
+        name = 'bot-api-library'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
         publicDownloadNumbers = false
         version {
             name = '1.0'
+            mavenCentralSync {
+                user = properties['sonatype.user']
+                password = properties['sonatype.password']
+            }
         }
     }
+
+    publish = true
 }
