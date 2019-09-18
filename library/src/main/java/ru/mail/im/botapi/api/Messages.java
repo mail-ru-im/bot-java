@@ -12,9 +12,30 @@ public interface Messages {
     MessageResponse sendText(@RequestParam("chatId") final String chatId,
                              @RequestParam("text") final String text) throws IOException;
 
+    @GetRequest("messages/sendText")
+    MessageResponse replyText(@RequestParam("chatId") final String chatId,
+                              @RequestParam("text") final String text,
+                              @RequestParam("replyMsgId") final long replyMsgId) throws IOException;
+
+    @GetRequest("messages/sendText")
+    MessageResponse forwardText(@RequestParam("chatId") final String chatId,
+                                @RequestParam("text") final String text,
+                                @RequestParam("forwardChatId") final String forwardChatId,
+                                @RequestParam("forwardMsgId") final long forwardMsgId) throws IOException;
+
+
     @PostRequest("messages/sendFile")
-    MessageResponse sendFile(@RequestParam("chatId") final String chatId,
-                             @RequestParam("file") final File file) throws IOException;
+    MessageResponse replyFile(@RequestParam("chatId") final String chatId,
+                                  @RequestParam("file") final File file,
+                                  @RequestParam("replyMsgId") final long replyMsgId,
+                                  @RequestParam("caption") String caption) throws IOException;
+
+    @PostRequest("messages/sendFile")
+    MessageResponse forwardFile(@RequestParam("chatId") final String chatId,
+                                    @RequestParam("file") final File file,
+                                    @RequestParam("forwardChatId") final String forwardChatId,
+                                    @RequestParam("forwardMsgId") final long forwardMsgId,
+                                    @RequestParam("caption") String caption) throws IOException;
 
     @PostRequest("messages/sendFile")
     MessageResponse sendFile(@RequestParam("chatId") final String chatId,

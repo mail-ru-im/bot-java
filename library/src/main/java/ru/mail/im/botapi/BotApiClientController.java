@@ -23,12 +23,35 @@ public class BotApiClientController {
         return client.messages().sendText(chatId, text);
     }
 
+    public MessageResponse replyText(String chatId, String text, long replyMsgId) throws IOException {
+        return client.messages().replyText(chatId, text, replyMsgId);
+    }
+
+    public MessageResponse forwardText(String chatId,
+                                       String text,
+                                       String forwardChatId,
+                                       long forwardMsgId) throws IOException {
+        return client.messages().forwardText(chatId, text, forwardChatId, forwardMsgId);
+    }
+
     public MessageResponse sendFile(String chatId, File file) throws IOException {
-        return client.messages().sendFile(chatId, file);
+        return client.messages().sendFile(chatId, file, null);
     }
 
     public MessageResponse sendFile(String chatId, File file, String caption) throws IOException {
         return client.messages().sendFile(chatId, file, caption);
+    }
+
+    public MessageResponse replyFile(String chatId, File file, long replyMsgId, String caption) throws IOException {
+        return client.messages().replyFile(chatId, file, replyMsgId, caption);
+    }
+
+    public MessageResponse forwardFile(String chatId,
+                                       File file,
+                                       String forwardChatId,
+                                       long forwardMsgId,
+                                       String caption) throws IOException {
+        return client.messages().forwardFile(chatId, file, forwardChatId, forwardMsgId, caption);
     }
 
     public ApiResponse editText(String chatId, long msgId, String text) throws IOException {

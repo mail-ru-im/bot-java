@@ -11,6 +11,7 @@ import ru.mail.im.botapi.util.ListenerDescriptor;
 import ru.mail.im.botapi.util.ListenerList;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotApiClient {
@@ -79,7 +80,7 @@ public class BotApiClient {
     }
 
     private void startInternal() {
-        final OkHttpClient httpClient = new OkHttpClient();
+        final OkHttpClient httpClient =  new OkHttpClient.Builder().readTimeout(pollTime, TimeUnit.SECONDS).build();
         api = new Api(httpClient, baseUrl, token);
 
         fetcher = new Fetcher(httpClient,

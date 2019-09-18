@@ -42,7 +42,7 @@ class QueryBuilder {
 
     private List<Object> getParamValues(final int index) {
         Object arg = args[index];
-        if (arg.getClass().isArray()) {
+        if (arg != null && arg.getClass().isArray()) {
             final int length = Array.getLength(arg);
             final List<Object> list = new ArrayList<>(length);
             for (int i = 0; i < length; i++) {

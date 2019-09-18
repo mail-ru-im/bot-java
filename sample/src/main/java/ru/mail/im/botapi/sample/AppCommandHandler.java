@@ -62,7 +62,7 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onSendFile(final String chatId, final File file) {
-        api(client -> client.messages().sendFile(chatId, file));
+        api(client -> client.messages().sendFile(chatId, file, null));
     }
 
     @Override

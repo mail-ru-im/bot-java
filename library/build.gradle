@@ -71,7 +71,7 @@ publishing {
             }
             groupId 'io.github.mail-ru-im'
             artifactId 'bot-api'
-            version '1.0'
+            version '1.1'
             pom.withXml {
                 def root = asNode()
                 root.appendNode('name', 'bot-api')
@@ -93,7 +93,7 @@ bintray {
         vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
         publicDownloadNumbers = false
         version {
-            name = '1.0'
+            name = '1.1'
             mavenCentralSync {
                 user = properties['sonatype.user']
                 password = properties['sonatype.password']
