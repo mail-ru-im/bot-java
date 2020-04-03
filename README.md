@@ -2,7 +2,7 @@
 
 # Java interface for bot API
 
-[![Build Status](https://travis-ci.com/mail-ru-im/bot-java.svg?branch=master)](https://travis-ci.com/mail-ru-im/bot-java)
+[![Build Status](https://travis-ci.org/mail-ru-im/bot-java.svg?branch=master)](https://travis-ci.org/mail-ru-im/bot-java)
 [![codecov](https://codecov.io/gh/mail-ru-im/bot-java/branch/master/graph/badge.svg)](https://codecov.io/gh/mail-ru-im/bot-java)
 
 ## Install
