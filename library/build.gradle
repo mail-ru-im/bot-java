@@ -2,16 +2,24 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
     id "maven-publish"
     id "java"
+    id "jacoco"
 }
 
+targetCompatibility = versions.javaVersion
 sourceCompatibility = versions.javaVersion
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 repositories {
     mavenCentral()
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}
+
+check.dependsOn jacocoTestReport
 
 dependencies {
     compile "com.google.code.findbugs:jsr305:${versions.jsr305}"
@@ -59,47 +67,52 @@ def pomConfig = {
     }
 }
 
-publishing {
-    publications {
-        ApiPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar {
-                classifier "sources"
-            }
-            artifact javadocJar {
-                classifier "javadoc"
-            }
-            groupId 'io.github.mail-ru-im'
-            artifactId 'bot-api'
-            version '1.1'
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('name', 'bot-api')
-                root.appendNode('url', 'https://github.com/mail-ru-im/bot-java')
-                root.children().last() + pomConfig
-            }
-        }
-    }
-}
-
-bintray {
-    user = properties['bintray.user']
-    key = properties['bintray.key']
-    publications = ['ApiPublication']
-    pkg {
-        repo = 'im-bot-api'
-        name = 'bot-api-library'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
-        publicDownloadNumbers = false
-        version {
-            name = '1.1'
-            mavenCentralSync {
-                user = properties['sonatype.user']
-                password = properties['sonatype.password']
+File propsFile = project.rootProject.file('local.properties')
+if (propsFile.exists()) {
+    Properties properties = new Properties()
+    properties.load(propsFile.newDataInputStream())
+    publishing {
+        publications {
+            ApiPublication(MavenPublication) {
+                from components.java
+                artifact sourcesJar {
+                    classifier "sources"
+                }
+                artifact javadocJar {
+                    classifier "javadoc"
+                }
+                groupId 'io.github.mail-ru-im'
+                artifactId 'bot-api'
+                version '1.1'
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('name', 'bot-api')
+                    root.appendNode('url', 'https://github.com/mail-ru-im/bot-java')
+                    root.children().last() + pomConfig
+                }
             }
         }
     }
 
-    publish = true
+    bintray {
+        user = properties['bintray.user']
+        key = properties['bintray.key']
+        publications = ['ApiPublication']
+        pkg {
+            repo = 'im-bot-api'
+            name = 'bot-api-library'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
+            publicDownloadNumbers = false
+            version {
+                name = '1.1'
+                mavenCentralSync {
+                    user = properties['sonatype.user']
+                    password = properties['sonatype.password']
+                }
+            }
+        }
+
+        publish = true
+    }
 }
