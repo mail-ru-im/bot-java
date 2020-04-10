@@ -86,6 +86,16 @@ class FileFetchWriter implements Closeable {
             stream.format("Timestamp :%s%n", event.getTimestamp());
             return null;
         }
+
+        @Override
+        public Void visitCallbackQuery(final CallbackQueryEvent event, final PrintStream printStream) {
+            stream.format("Event type :%s%n", event.getType());
+            stream.format("Message chat :%s%n", event.getMessageChat().getChatId());
+            stream.format("Message timestamp :%s%n", event.getMessageTimestamp());
+            stream.format("CallbackData :%s%n", event.getCallbackData());
+            stream.format("Callback query id :%s%n", event.getQueryId());
+            return null;
+        }
     };
 
     FileFetchWriter(final File file) throws FileNotFoundException {

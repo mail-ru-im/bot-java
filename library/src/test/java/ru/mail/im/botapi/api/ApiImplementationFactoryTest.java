@@ -1,5 +1,6 @@
 package ru.mail.im.botapi.api;
 
+import com.google.gson.Gson;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -32,9 +33,12 @@ public class ApiImplementationFactoryTest {
         }
     };
 
-    private final ApiImplementationFactory factory = new ApiImplementationFactory(requestExecutor,
-            "https://u.icq.net/rapi/botapi",
-            "qwert");
+    private final ApiImplementationFactory factory = new ApiImplementationFactory(
+        new Gson(),
+        requestExecutor,
+        "https://u.icq.net/rapi/botapi",
+        "qwert"
+    );
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

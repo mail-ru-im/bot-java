@@ -17,4 +17,6 @@ public interface EventVisitor<IN, OUT> {
     OUT visitPinnedMessage(PinnedMessageEvent pinnedMessageEvent, IN in);
 
     OUT visitUnpinnedMessage(UnpinnedMessageEvent unpinnedMessageEvent, IN in);
+
+    OUT visitCallbackQuery(CallbackQueryEvent callbackQueryEvent, IN in);
 }

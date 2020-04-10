@@ -11,7 +11,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class AppCommandHandler implements CommandHandler {
 
@@ -32,7 +35,7 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onStart(final String token) {
-        client = new BotApiClient("https://u.icq.net/rapi/botapi", token, 0, 1500);
+        client = new BotApiClient(token, 0, 1500);
         client.start();
     }
 
@@ -57,17 +60,17 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onSendText(final String chatId, final String text) {
-        api(client -> client.messages().sendText(chatId, text));
+        api(client -> client.messages().sendText(chatId, text, null, null, null, null));
     }
 
     @Override
     public void onSendFile(final String chatId, final File file) {
-        api(client -> client.messages().sendFile(chatId, file, null));
+        api(client -> client.messages().sendFile(chatId, file, null, null, null, null, null));
     }
 
     @Override
     public void onSendFile(final String chatId, final File file, final String caption) {
-        api(client -> client.messages().sendFile(chatId, file, caption));
+        api(client -> client.messages().sendFile(chatId, file, caption, null, null, null, null));
     }
 
     @Override
@@ -77,12 +80,12 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onEditText(final String chatId, final long msgId, final String newText) {
-        api(client -> client.messages().editText(chatId, msgId, newText));
+        api(client -> client.messages().editText(chatId, msgId, newText, null));
     }
 
     @Override
     public void onDelete(final String chatId, final long msgId) {
-        api(client -> client.messages().deleteMessages(chatId, msgId));
+        api(client -> client.messages().deleteMessages(chatId, new long[]{msgId}));
     }
 
     @Override
