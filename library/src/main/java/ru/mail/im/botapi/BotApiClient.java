@@ -1,10 +1,13 @@
 package ru.mail.im.botapi;
 
+import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import ru.mail.im.botapi.api.Api;
+import ru.mail.im.botapi.api.BotApi;
 import ru.mail.im.botapi.api.Chats;
 import ru.mail.im.botapi.api.Messages;
 import ru.mail.im.botapi.api.Self;
+import ru.mail.im.botapi.fetcher.BackoffFetcher;
 import ru.mail.im.botapi.fetcher.Fetcher;
 import ru.mail.im.botapi.fetcher.OnEventFetchListener;
 import ru.mail.im.botapi.util.ListenerDescriptor;
@@ -16,31 +19,95 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotApiClient {
 
-    private static final String BOT_API_URL = "https://u.icq.net/rapi/botapi";
+    private static final String ICQ_BOT_API_URL = "https://api.icq.net";
 
-    private final String baseUrl;
-    private final String token;
     private final long lastEventId;
     private final long pollTime;
 
     private final AtomicBoolean started = new AtomicBoolean();
-    private final ListenerList<OnEventFetchListener> fetchListenerList = new ListenerList<>(OnEventFetchListener.class);
+    private final ListenerList<OnEventFetchListener> fetchListenerList;
 
+    private final Api api;
     private Fetcher fetcher;
-    private Api api;
 
-    public BotApiClient(@Nonnull String token) {
-        this(BOT_API_URL, token, 0, 60);
+    public BotApiClient(@Nonnull final String token) {
+        this(ICQ_BOT_API_URL, token);
     }
 
-    public BotApiClient(@Nonnull String token, long lastEventId, long pollTime) {
-        this(BOT_API_URL, token, lastEventId, pollTime);
+    public BotApiClient(
+        final String apiUrl,
+        final String token
+    ) {
+        this(apiUrl, token, 0, 60);
     }
 
-    public BotApiClient(@Nonnull String baseUrl, @Nonnull final String token,
-                        long lastEventId, long pollTime) {
-        this.baseUrl = baseUrl;
-        this.token = token;
+    public BotApiClient(
+        final String token,
+        final long lastEventId,
+        final long pollTime
+    ) {
+        this(ICQ_BOT_API_URL, token, lastEventId, pollTime);
+    }
+
+    public BotApiClient(
+        final String apiBaseUrl,
+        final String token,
+        final long lastEventId,
+        final long pollTime
+    ) {
+        this(new Gson(), apiBaseUrl, token, lastEventId, pollTime);
+    }
+
+    public BotApiClient(
+        final Gson gson,
+        final String apiBaseUrl,
+        final String token,
+        final long lastEventId,
+        final long pollTime
+    ) {
+        this(
+            gson,
+            new OkHttpClient.Builder().readTimeout(pollTime, TimeUnit.SECONDS).build(),
+            new ListenerList<>(OnEventFetchListener.class),
+            apiBaseUrl,
+            token,
+            lastEventId,
+            pollTime
+        );
+    }
+
+    public BotApiClient(
+        final Gson gson,
+        final OkHttpClient httpClient,
+        final ListenerList<OnEventFetchListener> fetchListenerList,
+        final String apiBaseUrl,
+        final String token,
+        final long lastEventId,
+        final long pollTime
+    ) {
+        this(
+            new BotApi(gson, httpClient, apiBaseUrl + "/bot/v1/", token),
+            new BackoffFetcher(
+                httpClient,
+                events -> fetchListenerList.asListener().onEventFetch(events),
+                apiBaseUrl + "/bot/v1/events/get?token=" + token
+            ),
+            fetchListenerList,
+            lastEventId,
+            pollTime
+        );
+    }
+
+    public BotApiClient(
+        final Api api,
+        final Fetcher fetcher,
+        final ListenerList<OnEventFetchListener> fetchListenerList,
+        final long lastEventId,
+        final long pollTime
+    ) {
+        this.api = api;
+        this.fetcher = fetcher;
+        this.fetchListenerList = fetchListenerList;
         this.lastEventId = lastEventId;
         this.pollTime = pollTime;
     }
@@ -48,9 +115,9 @@ public class BotApiClient {
     public void start() {
         if (started.compareAndSet(false, true)) {
             startInternal();
-            BotLogger.i("bot successfully started token:" + token);
+            BotLogger.i("bot successfully started");
         } else {
-            BotLogger.i("bot already started token:" + token);
+            BotLogger.i("bot already started");
         }
     }
 
@@ -80,13 +147,6 @@ public class BotApiClient {
     }
 
     private void startInternal() {
-        final OkHttpClient httpClient =  new OkHttpClient.Builder().readTimeout(pollTime, TimeUnit.SECONDS).build();
-        api = new Api(httpClient, baseUrl, token);
-
-        fetcher = new Fetcher(httpClient,
-                events -> fetchListenerList.asListener().onEventFetch(events),
-                "https://api.icq.net/bot/v1/events/get?token=" + token
-        );
         fetcher.start(lastEventId, pollTime);
     }
 

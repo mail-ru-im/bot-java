@@ -27,6 +27,8 @@ class EventDeserializer implements JsonDeserializer<Event> {
                 return context.deserialize(json, NewChatMembersEvent.class);
             case "leftChatMembers":
                 return context.deserialize(json, LeftChatMembersEvent.class);
+            case "callbackQuery":
+                return context.deserialize(json, CallbackQueryEvent.class);
             default:
                 return new UnknownEvent(json.toString());
         }

@@ -1,5 +1,6 @@
 package ru.mail.im.botapi.api;
 
+import com.google.gson.Gson;
 import okhttp3.HttpUrl;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
@@ -15,13 +16,18 @@ import java.util.List;
 
 class ApiImplementationFactory {
 
+    private final Gson gson;
     private final RequestExecutor requestExecutor;
     private final HttpUrl baseUrl;
     private final String token;
 
-    ApiImplementationFactory(@Nonnull final RequestExecutor requestExecutor,
-                             @Nonnull final String baseUrl,
-                             @Nonnull final String token) {
+    ApiImplementationFactory(
+        @Nonnull final Gson gson,
+        @Nonnull final RequestExecutor requestExecutor,
+        @Nonnull final String baseUrl,
+        @Nonnull final String token
+    ) {
+        this.gson = gson;
         this.requestExecutor = requestExecutor;
         this.baseUrl = HttpUrl.get(baseUrl);
         this.token = token;
@@ -29,7 +35,7 @@ class ApiImplementationFactory {
 
     <T> T createImplementation(final Class<T> clazz) {
         Object impl = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-            final List<QueryParameter> query = new QueryBuilder(method, args).build();
+            final List<QueryParameter> query = new QueryBuilder(gson, method, args).build();
             final Request request = buildRequest(method, query);
             return requestExecutor.execute(request, method.getReturnType());
         });

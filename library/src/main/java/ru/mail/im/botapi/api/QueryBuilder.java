@@ -1,5 +1,7 @@
 package ru.mail.im.botapi.api;
 
+import com.google.gson.Gson;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -8,10 +10,12 @@ import java.util.Collections;
 import java.util.List;
 
 class QueryBuilder {
+    private final Gson gson;
     private final Method method;
     private final Object[] args;
 
-    QueryBuilder(final Method method, final Object[] args) {
+    QueryBuilder(final Gson gson, final Method method, final Object[] args) {
+        this.gson = gson;
         this.method = method;
         this.args = args;
     }
@@ -24,7 +28,9 @@ class QueryBuilder {
         for (int i = 0; i < args.length; i++) {
             final String name = getParamName(i);
             for (Object value : getParamValues(i)) {
-                result.add(new QueryParameter(name, value));
+                if (value != null) {
+                    result.add(new QueryParameter(gson, name, value));
+                }
             }
         }
         return result;

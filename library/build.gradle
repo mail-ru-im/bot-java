@@ -81,9 +81,9 @@ if (propsFile.exists()) {
                 artifact javadocJar {
                     classifier "javadoc"
                 }
-                groupId 'io.github.mail-ru-im'
+                groupId 'ru.mail'
                 artifactId 'bot-api'
-                version '1.1'
+                version '1.2.0'
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('name', 'bot-api')
@@ -99,17 +99,14 @@ if (propsFile.exists()) {
         key = properties['bintray.key']
         publications = ['ApiPublication']
         pkg {
-            repo = 'im-bot-api'
-            name = 'bot-api-library'
+            repo = 'maven'
+            name = 'bot-api'
+            userOrg = 'mail-ru-im'
             licenses = ['MIT']
             vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
             publicDownloadNumbers = false
             version {
-                name = '1.1'
-                mavenCentralSync {
-                    user = properties['sonatype.user']
-                    password = properties['sonatype.password']
-                }
+                name = '1.2.0'
             }
         }
 

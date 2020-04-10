@@ -1,5 +1,6 @@
 package ru.mail.im.botapi.api;
 
+import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -14,21 +15,21 @@ public class QueryBuilderTest {
     @Test
     public void noArg() throws Exception {
         final Method method = Foo.class.getDeclaredMethod("noArg");
-        List<QueryParameter> params = new QueryBuilder(method, null).build();
+        List<QueryParameter> params = new QueryBuilder(new Gson(), method, null).build();
         assertTrue(params.isEmpty());
     }
 
     @Test
     public void noArg2() throws Exception {
         final Method method = Foo.class.getDeclaredMethod("noArg");
-        List<QueryParameter> params = new QueryBuilder(method, new Object[0]).build();
+        List<QueryParameter> params = new QueryBuilder(new Gson(), method, new Object[0]).build();
         assertTrue(params.isEmpty());
     }
 
     @Test
     public void oneSingleArg() throws Exception {
         final Method method = Foo.class.getDeclaredMethod("oneArg", String.class);
-        List<QueryParameter> params = new QueryBuilder(method, new Object[]{"Hello"}).build();
+        List<QueryParameter> params = new QueryBuilder(new Gson(), method, new Object[]{"Hello"}).build();
         assertEquals(1, params.size());
         assertEquals("test", params.get(0).name);
         assertEquals("Hello", params.get(0).value);
@@ -37,7 +38,7 @@ public class QueryBuilderTest {
     @Test
     public void oneArrayArg() throws Exception {
         final Method method = Foo.class.getDeclaredMethod("oneArrayArg", int[].class);
-        List<QueryParameter> params = new QueryBuilder(method, new Object[]{new int[]{111, 222}}).build();
+        List<QueryParameter> params = new QueryBuilder(new Gson(), method, new Object[]{new int[]{111, 222}}).build();
         assertEquals(2, params.size());
 
         assertEquals("values", params.get(0).name);
@@ -51,7 +52,7 @@ public class QueryBuilderTest {
     public void noArgAnnotation() throws Exception {
         final Method method = Foo.class.getDeclaredMethod("noAnnotation", int.class, boolean.class, String.class);
         try {
-            new QueryBuilder(method, new Object[]{123, true, "qwe"}).build();
+            new QueryBuilder(new Gson(), method, new Object[]{123, true, "qwe"}).build();
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Parameter with index 1 was not annotated with @RequestParam", e.getMessage());
