@@ -5,8 +5,14 @@
 [![Build Status](https://travis-ci.org/mail-ru-im/bot-java.svg?branch=master)](https://travis-ci.org/mail-ru-im/bot-java)
 [![codecov](https://codecov.io/gh/mail-ru-im/bot-java/branch/master/graph/badge.svg)](https://codecov.io/gh/mail-ru-im/bot-java)
 
+[![jcenter version](https://img.shields.io/bintray/v/mail-ru-im/maven/bot-api.svg)](https://bintray.com/mail-ru-im/maven/bot-api/_latestVersion)
+
 ## Install
- Maven
+
+### Deprecated way
+Group id `io.github.mail-ru-im` will no longer being maintained. We moved this artifact to the `ru.mail`  group id.
+
+#### Maven
 ```xml
     <repositories>
         ...
@@ -28,7 +34,7 @@
     </dependencies>
 
 ```
- Gradle
+#### Gradle
 ```groovy
 repositories {
     jcenter()
@@ -36,6 +42,40 @@ repositories {
 
 dependencies {
     implementation 'io.github.mail-ru-im:bot-api:1.2.0'
+}
+```
+
+### New way
+#### Maven
+```xml
+    <repositories>
+        ...
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+        ...
+    </repositories>
+    
+    <dependencies>
+        ...
+        <dependency>
+            <groupId>ru.mail</groupId>
+            <artifactId>bot-api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        ...
+    </dependencies>
+
+```
+#### Gradle
+```groovy
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'ru.mail:bot-api:1.2.0'
 }
 ```
 
