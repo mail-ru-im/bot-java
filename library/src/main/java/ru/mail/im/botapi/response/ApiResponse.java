@@ -12,6 +12,14 @@ public class ApiResponse {
     @SerializedName("description")
     private String description;
 
+    public boolean isOk() {
+        return ok;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public String toString() {
         return "ApiResponse{" +
