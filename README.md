@@ -9,44 +9,9 @@
 
 ## Install
 
-### Deprecated way
 Group id `io.github.mail-ru-im` will no longer being maintained. We moved this artifact to the `ru.mail`  group id.
 
-#### Maven
-```xml
-    <repositories>
-        ...
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        ...
-    </repositories>
-    
-    <dependencies>
-        ...
-        <dependency>
-            <groupId>io.github.mail-ru-im</groupId>
-            <artifactId>bot-api</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        ...
-    </dependencies>
-
-```
-#### Gradle
-```groovy
-repositories {
-    jcenter()
-}
-
-dependencies {
-    implementation 'io.github.mail-ru-im:bot-api:1.2.0'
-}
-```
-
-### New way
-#### Maven
+### Maven
 ```xml
     <repositories>
         ...
@@ -62,20 +27,20 @@ dependencies {
         <dependency>
             <groupId>ru.mail</groupId>
             <artifactId>bot-api</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
         </dependency>
         ...
     </dependencies>
 
 ```
-#### Gradle
+### Gradle
 ```groovy
 repositories {
     jcenter()
 }
 
 dependencies {
-    implementation 'ru.mail:bot-api:1.2.0'
+    implementation 'ru.mail:bot-api:1.2.1'
 }
 ```
 
@@ -89,9 +54,9 @@ Note a bot can only reply after the user has added it to his contacts list, or i
 
 ```java
 
-// create bot with token received from Metabot for ICQ New/Agent
+// For ICQ New/Agent: create bot with token received from Metabot
 BotApiClient client = new BotApiClient(token);
-// create bot with token and api url (for example `https://myteam.mail.ru/`) from Metabot
+// For Myteam: create bot with token from Metabot and host url (for example `https://myteam.mail.ru/`)
 BotApiClient client = new BotApiClient(apiBaseUrl, token);
 
 BotApiClientController controller = BotApiClientController.startBot(client);
@@ -134,14 +99,27 @@ controller.sendFile(
 );
 
 // reply file
-controller.sendFile(
+MessageResponse sendFileResponse = controller.sendFile(
     new SendFileRequest()
         .setChatId(chatId)
         .setFile(file)
         .setCaption("Awesome file")
         .setReplyMsgId(Collections.singletonList(messageId))
 );
+if (!sendFileResponse.isOk()) { // sent successfully or not
+    // and get the error description if sending failed
+    String errorDescription = sendFileResponse.getDescription();
+}
 
 client.stop(); // stop when work done
 ```
+
+## Changelog
+
+`1.2.1` 
+- Api response status check possibility
+
+`1.2.0` 
+- Support inline keyboards        
+- Moved from `io.github.mail-ru-im` to `ru.mail` group id
 
