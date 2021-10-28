@@ -50,7 +50,7 @@ public class BotApiClientController {
         final String chatId,
         final String text
     ) throws IOException {
-        return client.messages().sendText(chatId, text, null, null,null, null, null, null);
+        return client.messages().sendText(chatId, text, null, null, null, null, null, null);
     }
 
     /**
