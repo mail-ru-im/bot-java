@@ -33,6 +33,8 @@ public class BotApiClientController {
         return client.messages().sendText(
             request.getChatId(),
             request.getText(),
+            request.getFormat(),
+            request.getParseMode(),
             toLongArray(request.getReplyMsgId()),
             request.getForwardChatId(),
             toLongArray(request.getForwardMsgId()),
@@ -48,7 +50,7 @@ public class BotApiClientController {
         final String chatId,
         final String text
     ) throws IOException {
-        return client.messages().sendText(chatId, text, null, null, null, null);
+        return client.messages().sendText(chatId, text, null, null, null, null, null, null);
     }
 
     /**
@@ -60,7 +62,7 @@ public class BotApiClientController {
         final String text,
         final long replyMsgId
     ) throws IOException {
-        return client.messages().sendText(chatId, text, new long[]{replyMsgId}, null, null, null);
+        return client.messages().sendText(chatId, text, null, null, new long[]{replyMsgId}, null, null, null);
     }
 
     /**
@@ -73,7 +75,7 @@ public class BotApiClientController {
         final String forwardChatId,
         final long forwardMsgId
     ) throws IOException {
-        return client.messages().sendText(chatId, text, null, forwardChatId, new long[]{forwardMsgId}, null);
+        return client.messages().sendText(chatId, text, null, null, null, forwardChatId, new long[]{forwardMsgId}, null);
     }
 
     public MessageResponse sendFile(final SendFileRequest request) throws IOException {

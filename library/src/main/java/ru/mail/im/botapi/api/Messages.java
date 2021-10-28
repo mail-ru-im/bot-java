@@ -14,6 +14,8 @@ public interface Messages {
     MessageResponse sendText(
         @RequestParam("chatId") final String chatId,
         @RequestParam("text") final String text,
+        @RequestParam("format") final String format,
+        @RequestParam("parseMode") final String parseMode,
         @RequestParam("replyMsgId") final long[] replyMsgId,
         @RequestParam("forwardChatId") final String forwardChatId,
         @RequestParam("forwardMsgId") final long[] forwardMsgId,
