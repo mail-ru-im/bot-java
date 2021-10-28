@@ -60,7 +60,7 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onSendText(final String chatId, final String text) {
-        api(client -> client.messages().sendText(chatId, text, null, null, null, null));
+        api(client -> client.messages().sendText(chatId, text, null, null,null, null, null, null));
     }
 
     @Override

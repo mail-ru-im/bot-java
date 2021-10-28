@@ -5,6 +5,8 @@ import java.util.List;
 public class SendTextRequest {
     private String chatId;
     private String text;
+    private String format;
+    private String parseMode;
     private List<Long> replyMsgId;
     private String forwardChatId;
     private List<Long> forwardMsgId;
@@ -61,6 +63,24 @@ public class SendTextRequest {
 
     public SendTextRequest setKeyboard(final List<List<InlineKeyboardButton>> keyboard) {
         this.keyboard = keyboard;
+        return this;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public SendTextRequest setFormat(String format) {
+        this.format = format;
+        return this;
+    }
+
+    public String getParseMode() {
+        return parseMode;
+    }
+
+    public SendTextRequest setParseMode(String parseMode) {
+        this.parseMode = parseMode;
         return this;
     }
 }
