@@ -27,7 +27,7 @@ Group id `io.github.mail-ru-im` will no longer being maintained. We moved this a
         <dependency>
             <groupId>ru.mail</groupId>
             <artifactId>bot-api</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
         </dependency>
         ...
     </dependencies>
@@ -40,7 +40,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'ru.mail:bot-api:1.2.1'
+    implementation 'ru.mail:bot-api:1.2.2'
 }
 ```
 
@@ -115,6 +115,10 @@ client.stop(); // stop when work done
 ```
 
 ## Changelog
+
+`1.2.2` 
+- Support text formats: MarkdownV2, HTML
+- Support button's style for inline keyboard
 
 `1.2.1` 
 - Api response status check possibility

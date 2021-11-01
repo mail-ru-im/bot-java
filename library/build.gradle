@@ -83,7 +83,7 @@ if (propsFile.exists()) {
                 }
                 groupId 'ru.mail'
                 artifactId 'bot-api'
-                version '1.2.1'
+                version '1.2.2'
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('name', 'bot-api')
@@ -106,7 +106,7 @@ if (propsFile.exists()) {
             vcsUrl = 'https://github.com/mail-ru-im/bot-java.git'
             publicDownloadNumbers = false
             version {
-                name = '1.2.1'
+                name = '1.2.2'
             }
         }
 
