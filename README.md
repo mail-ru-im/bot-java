@@ -5,19 +5,20 @@
 [![Build Status](https://travis-ci.org/mail-ru-im/bot-java.svg?branch=master)](https://travis-ci.org/mail-ru-im/bot-java)
 [![codecov](https://codecov.io/gh/mail-ru-im/bot-java/branch/master/graph/badge.svg)](https://codecov.io/gh/mail-ru-im/bot-java)
 
-[![jcenter version](https://img.shields.io/bintray/v/mail-ru-im/maven/bot-api.svg)](https://bintray.com/mail-ru-im/maven/bot-api/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.mail.im/bot-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ru.mail.im/bot-api)
 
 ## Install
 
-Group id `io.github.mail-ru-im` will no longer being maintained. We moved this artifact to the `ru.mail`  group id.
+Group ids `io.github.mail-ru-im` and `ru.mail` will no longer being maintained. We moved this artifact to the `ru.mail.im` group id.
 
 ### Maven
 ```xml
     <repositories>
         ...
         <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com</url>
+            <id>mavencentral</id>
+            <name>Maven Central Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
         </repository>
         ...
     </repositories>
@@ -25,7 +26,7 @@ Group id `io.github.mail-ru-im` will no longer being maintained. We moved this a
     <dependencies>
         ...
         <dependency>
-            <groupId>ru.mail</groupId>
+            <groupId>ru.mail.im</groupId>
             <artifactId>bot-api</artifactId>
             <version>1.2.2</version>
         </dependency>
@@ -36,11 +37,11 @@ Group id `io.github.mail-ru-im` will no longer being maintained. We moved this a
 ### Gradle
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    implementation 'ru.mail:bot-api:1.2.2'
+    implementation 'ru.mail.im:bot-api:1.2.2'
 }
 ```
 
@@ -119,6 +120,7 @@ client.stop(); // stop when work done
 `1.2.2` 
 - Support text formats: MarkdownV2, HTML
 - Support button's style for inline keyboard
+- Moved from JCenter with `ru.mail` group id to Maven Central with `ru.mail.im` group id
 
 `1.2.1` 
 - Api response status check possibility
