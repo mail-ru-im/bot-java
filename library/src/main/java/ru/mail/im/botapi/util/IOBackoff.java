@@ -24,7 +24,7 @@ public class IOBackoff {
         try {
             operation.execute();
             reset();
-        } catch (IOException ignored) {
+        } catch (Exception ignored) {
             waitNext();
         }
     }
