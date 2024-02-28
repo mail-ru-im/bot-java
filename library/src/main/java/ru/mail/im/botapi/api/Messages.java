@@ -38,6 +38,7 @@ public interface Messages {
         @RequestParam("chatId") final String chatId,
         @RequestParam("msgId") final long msgId,
         @RequestParam("text") final String newText,
+        @RequestParam("format") final String format,
         @RequestParam("inlineKeyboardMarkup") final List<List<InlineKeyboardButton>> keyboard
     ) throws IOException;
 
