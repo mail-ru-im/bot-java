@@ -145,6 +145,7 @@ public class BotApiClientController {
             request.getChatId(),
             request.getMsgId(),
             request.getNewText(),
+            request.getFormat(),
             request.getKeyboard()
         );
     }
@@ -158,7 +159,7 @@ public class BotApiClientController {
         final long msgId,
         final String text
     ) throws IOException {
-        return client.messages().editText(chatId, msgId, text, null);
+        return client.messages().editText(chatId, msgId, text, null, null);
     }
 
     public ApiResponse deleteMessage(final DeleteMessagesRequest request) throws IOException {
