@@ -80,7 +80,7 @@ class AppCommandHandler implements CommandHandler {
 
     @Override
     public void onEditText(final String chatId, final long msgId, final String newText) {
-        api(client -> client.messages().editText(chatId, msgId, newText, null));
+        api(client -> client.messages().editText(chatId, msgId, newText, null, null, null));
     }
 
     @Override

@@ -6,6 +6,8 @@ public class EditTextRequest {
     private String chatId;
     private long msgId;
     private String newText;
+    private String format;
+    private String parseMode;
     private List<List<InlineKeyboardButton>> keyboard;
 
     public String getChatId() {
@@ -41,6 +43,24 @@ public class EditTextRequest {
 
     public EditTextRequest setKeyboard(final List<List<InlineKeyboardButton>> keyboard) {
         this.keyboard = keyboard;
+        return this;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public EditTextRequest setFormat(String format) {
+        this.format = format;
+        return this;
+    }
+
+    public String getParseMode() {
+        return parseMode;
+    }
+
+    public EditTextRequest setParseMode(String parseMode) {
+        this.parseMode = parseMode;
         return this;
     }
 }
