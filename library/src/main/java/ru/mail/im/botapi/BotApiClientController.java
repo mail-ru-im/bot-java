@@ -140,6 +140,17 @@ public class BotApiClientController {
         return client.messages().sendFile(chatId, file, caption, null, forwardChatId, new long[]{forwardMsgId}, null);
     }
 
+    public MessageResponse sendVoice(final SendVoiceRequest request) throws IOException {
+        return client.messages().sendVoice(
+                request.getChatId(),
+                request.getFile(),
+                toLongArray(request.getReplyMsgId()),
+                request.getForwardChatId(),
+                toLongArray(request.getForwardMsgId()),
+                request.getKeyboard()
+        );
+    }
+
     public ApiResponse editText(final EditTextRequest request) throws IOException {
         return client.messages().editText(
             request.getChatId(),
@@ -188,6 +199,14 @@ public class BotApiClientController {
             request.getShowAlert(),
             request.getUrl()
         );
+    }
+
+    public FileResponse fileGetInfo(final String fileId) throws IOException {
+        return client.files().getInfo(fileId);
+    }
+
+    public FetchResponse getEvents(final EventRequest request) throws IOException {
+        return client.events().getEvents(request.getLastEventId(), request.getPollTime());
     }
 
     public ChatsGetAdminsResponse getChatAdmins(String chatId) throws IOException {

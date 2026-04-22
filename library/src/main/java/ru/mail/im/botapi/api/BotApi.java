@@ -10,12 +10,14 @@ public class BotApi implements Api {
     private final Messages messages;
     private final Self self;
     private final Chats chats;
+    private final Files files;
+    private final Events events;
 
     public BotApi(
-        @Nonnull final Gson gson,
-        @Nonnull final OkHttpClient httpClient,
-        @Nonnull final String baseUrl,
-        @Nonnull final String token
+            @Nonnull final Gson gson,
+            @Nonnull final OkHttpClient httpClient,
+            @Nonnull final String baseUrl,
+            @Nonnull final String token
     ) {
         final ApiImplementationFactory factory = new ApiImplementationFactory(
             gson,
@@ -27,6 +29,8 @@ public class BotApi implements Api {
         messages = factory.createImplementation(Messages.class);
         self = factory.createImplementation(Self.class);
         chats = factory.createImplementation(Chats.class);
+        files = factory.createImplementation(Files.class);
+        events = factory.createImplementation(Events.class);
     }
 
     @Override
@@ -42,5 +46,15 @@ public class BotApi implements Api {
     @Override
     public Chats chats() {
         return chats;
+    }
+
+    @Override
+    public Files files() {
+        return files;
+    }
+
+    @Override
+    public Events events() {
+        return events;
     }
 }

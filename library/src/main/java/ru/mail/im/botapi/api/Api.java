@@ -4,4 +4,6 @@ public interface Api {
     Self self();
     Messages messages();
     Chats chats();
+    Files files();
+    Events events();
 }

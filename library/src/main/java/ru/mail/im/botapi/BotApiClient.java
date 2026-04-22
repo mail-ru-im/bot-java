@@ -2,11 +2,7 @@ package ru.mail.im.botapi;
 
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
-import ru.mail.im.botapi.api.Api;
-import ru.mail.im.botapi.api.BotApi;
-import ru.mail.im.botapi.api.Chats;
-import ru.mail.im.botapi.api.Messages;
-import ru.mail.im.botapi.api.Self;
+import ru.mail.im.botapi.api.*;
 import ru.mail.im.botapi.fetcher.BackoffFetcher;
 import ru.mail.im.botapi.fetcher.Fetcher;
 import ru.mail.im.botapi.fetcher.OnEventFetchListener;
@@ -144,6 +140,14 @@ public class BotApiClient {
 
     public Chats chats() {
         return api.chats();
+    }
+
+    public Files files() {
+        return api.files();
+    }
+
+    public Events events() {
+        return api.events();
     }
 
     private void startInternal() {
