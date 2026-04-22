@@ -12,12 +12,14 @@ public class SimpleStart {
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter API URL:");
+        String apiUrl = scanner.nextLine();
         System.out.println("Enter bot token:");
         String token = scanner.nextLine();
         System.out.println("Enter test chatId:");
         String chatId = scanner.nextLine();
 
-        BotApiClient client = new BotApiClient(token);
+        BotApiClient client = new BotApiClient(apiUrl, token);
 
         BotApiClientController controller = BotApiClientController.startBot(client);
         System.out.println("STARTED");
