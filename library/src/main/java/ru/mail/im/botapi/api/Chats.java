@@ -1,13 +1,27 @@
 package ru.mail.im.botapi.api;
 
+import ru.mail.im.botapi.api.entity.ChatMember;
 import ru.mail.im.botapi.entity.ChatAction;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.response.ChatsGetAdminsResponse;
 import ru.mail.im.botapi.response.ChatsGetInfoResponse;
-
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public interface Chats {
+
+    @GetRequest("/chats/members/delete")
+    ApiResponse delete(
+            @RequestParam("chatId") final String chatId,
+            @RequestParam("members") final List<ChatMember> members
+    ) throws IOException;
+
+    @PostRequest("/chats/avatar/set")
+    ApiResponse setAvatar(
+            @RequestParam("chatId") final String chatId,
+            @RequestParam("members") final File avatar
+    ) throws IOException;
 
     @GetRequest("chats/sendActions")
     ApiResponse sendActions(@RequestParam("chatId") final String chatId,

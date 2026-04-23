@@ -209,6 +209,14 @@ public class BotApiClientController {
         return client.events().getEvents(request.getLastEventId(), request.getPollTime());
     }
 
+    public ApiResponse deleteFromChat(String chatId, List<ChatMember> members) throws IOException {
+        return client.chats().delete(chatId, members);
+    }
+
+    public ApiResponse setChatAvatar(SetAvatarRequest request) throws IOException {
+        return client.chats().setAvatar(request.getChatId(), request.getAvatar());
+    }
+
     public ChatsGetAdminsResponse getChatAdmins(String chatId) throws IOException {
         return client.chats().getAdmins(chatId);
     }
