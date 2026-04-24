@@ -229,6 +229,26 @@ public class BotApiClientController {
         return client.chats().sendActions(chatId, actions);
     }
 
+    public ChatsGetAdminsResponse getChatMembers(String chatId) throws IOException {
+        return client.chats().getMembers(chatId);
+    }
+
+    public ChatsUsersResponse getChatBlockedUsers(String chatId) throws IOException {
+        return client.chats().getBlockedUsers(chatId);
+    }
+
+    public ChatsUsersResponse getPendingUsers(String chatId) throws IOException {
+        return client.chats().getPendingUsers(chatId);
+    }
+
+    public ApiResponse blockUser(String chatId, String userId) throws IOException {
+        return client.chats().blockUser(chatId, userId);
+    }
+
+    public ApiResponse unblockUser(String chatId, String userId) throws IOException {
+        return client.chats().unblockUser(chatId, userId);
+    }
+
     public SelfGetResponse getSelfInfo() throws IOException {
         return client.self().get();
     }

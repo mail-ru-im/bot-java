@@ -4,6 +4,7 @@ import ru.mail.im.botapi.api.entity.ChatMember;
 import ru.mail.im.botapi.entity.ChatAction;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.response.ChatsGetAdminsResponse;
+import ru.mail.im.botapi.response.ChatsUsersResponse;
 import ru.mail.im.botapi.response.ChatsGetInfoResponse;
 import java.io.File;
 import java.io.IOException;
@@ -32,4 +33,21 @@ public interface Chats {
 
     @GetRequest("chats/getAdmins")
     ChatsGetAdminsResponse getAdmins(@RequestParam("chatId") final String chatId) throws IOException;
+
+    @GetRequest("chats/getMembers")
+    ChatsGetAdminsResponse getMembers(@RequestParam("chatId") final String chatId) throws IOException;
+
+    @GetRequest("/chats/getBlockedUsers")
+    ChatsUsersResponse getBlockedUsers(@RequestParam("chatId") final String chatId) throws IOException;
+
+    @GetRequest("/chats/getPendingUsers")
+    ChatsUsersResponse getPendingUsers(@RequestParam("chatId") final String chatId) throws IOException;
+
+    @GetRequest("/chats/blockUser")
+    ApiResponse blockUser(@RequestParam("chatId") final String chatId,
+                          @RequestParam("userId") final String userId) throws IOException;
+
+    @GetRequest("/chats/unblockUser")
+    ApiResponse unblockUser(@RequestParam("chatId") final String chatId,
+                          @RequestParam("userId") final String userId) throws IOException;
 }
