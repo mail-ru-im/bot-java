@@ -49,5 +49,18 @@ public interface Chats {
 
     @GetRequest("/chats/unblockUser")
     ApiResponse unblockUser(@RequestParam("chatId") final String chatId,
-                          @RequestParam("userId") final String userId) throws IOException;
+                            @RequestParam("userId") final String userId) throws IOException;
+
+    @GetRequest("/chats/resolvePending")
+    ApiResponse resolvePending(@RequestParam("chatId") final String chatId,
+                               @RequestParam("userId") final String userId,
+                               @RequestParam("approve") final Boolean approve) throws IOException;
+
+    @GetRequest("/chats/resolvePending")
+    ApiResponse resolvePending(@RequestParam("chatId") final String chatId,
+                               @RequestParam("everyone") final Boolean everyone) throws IOException;
+
+    @GetRequest("/chats/setTitle")
+    ApiResponse setTitle(@RequestParam("chatId") final String chatId,
+                         @RequestParam("title") final String title) throws IOException;
 }

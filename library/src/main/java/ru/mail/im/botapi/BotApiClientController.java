@@ -237,16 +237,28 @@ public class BotApiClientController {
         return client.chats().getBlockedUsers(chatId);
     }
 
-    public ChatsUsersResponse getPendingUsers(String chatId) throws IOException {
+    public ChatsUsersResponse getChatPendingUsers(String chatId) throws IOException {
         return client.chats().getPendingUsers(chatId);
     }
 
-    public ApiResponse blockUser(String chatId, String userId) throws IOException {
+    public ApiResponse chatBlockUser(String chatId, String userId) throws IOException {
         return client.chats().blockUser(chatId, userId);
     }
 
-    public ApiResponse unblockUser(String chatId, String userId) throws IOException {
+    public ApiResponse chatUnblockUser(String chatId, String userId) throws IOException {
         return client.chats().unblockUser(chatId, userId);
+    }
+
+    public ApiResponse chatResolvePending(String chatId, String userId, Boolean approve) throws IOException {
+        return client.chats().resolvePending(chatId, userId, approve);
+    }
+
+    public ApiResponse chatResolvePending(String chatId, Boolean everyone) throws IOException {
+        return client.chats().resolvePending(chatId, everyone);
+    }
+
+    public ApiResponse chatSetTitle(String chatId, String title) throws IOException {
+        return client.chats().setTitle(chatId, title);
     }
 
     public SelfGetResponse getSelfInfo() throws IOException {
