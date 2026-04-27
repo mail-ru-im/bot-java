@@ -4,11 +4,18 @@ import ru.mail.im.botapi.api.entity.AnswerCallbackQueryRequest;
 import ru.mail.im.botapi.api.entity.DeleteMessagesRequest;
 import ru.mail.im.botapi.api.entity.EditTextRequest;
 import ru.mail.im.botapi.api.entity.SendFileRequest;
+import ru.mail.im.botapi.api.entity.SendVoiceRequest;
 import ru.mail.im.botapi.api.entity.SendTextRequest;
+import ru.mail.im.botapi.api.entity.SetAvatarRequest;
+import ru.mail.im.botapi.fetcher.FetchResponse;
+import ru.mail.im.botapi.response.FileResponse;
 import ru.mail.im.botapi.entity.ChatAction;
+import ru.mail.im.botapi.api.entity.ChatMember;
+import ru.mail.im.botapi.api.entity.EventRequest;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.response.ChatsGetAdminsResponse;
 import ru.mail.im.botapi.response.ChatsGetInfoResponse;
+import ru.mail.im.botapi.response.ChatsUsersResponse;
 import ru.mail.im.botapi.response.MessageResponse;
 import ru.mail.im.botapi.response.SelfGetResponse;
 
