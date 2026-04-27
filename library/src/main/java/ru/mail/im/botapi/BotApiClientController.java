@@ -261,6 +261,22 @@ public class BotApiClientController {
         return client.chats().setTitle(chatId, title);
     }
 
+    public ApiResponse chatSetAbout(String chatId, String about) throws IOException {
+        return client.chats().setAbout(chatId, about);
+    }
+
+    public ApiResponse chatSetRules(String chatId, String rules) throws IOException {
+        return client.chats().setRules(chatId, rules);
+    }
+
+    public ApiResponse chatPinMessage(String chatId, long msgId) throws IOException {
+        return client.chats().pinMessage(chatId, msgId);
+    }
+
+    public ApiResponse chatUnpinMessage(String chatId, long msgId) throws IOException {
+        return client.chats().unpinMessage(chatId, msgId);
+    }
+
     public SelfGetResponse getSelfInfo() throws IOException {
         return client.self().get();
     }

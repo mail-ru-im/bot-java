@@ -63,4 +63,20 @@ public interface Chats {
     @GetRequest("/chats/setTitle")
     ApiResponse setTitle(@RequestParam("chatId") final String chatId,
                          @RequestParam("title") final String title) throws IOException;
+
+    @GetRequest("/chats/setAbout")
+    ApiResponse setAbout(@RequestParam("chatId") final String chatId,
+                         @RequestParam("about") final String about) throws IOException;
+
+    @GetRequest("/chats/setRules")
+    ApiResponse setRules(@RequestParam("chatId") final String chatId,
+                         @RequestParam("rules") final String rules) throws IOException;
+
+    @GetRequest("/chats/pinMessage")
+    ApiResponse pinMessage(@RequestParam("chatId") final String chatId,
+                           @RequestParam("msgId") final long msgId) throws IOException;
+
+    @GetRequest("/chats/unpinMessage")
+    ApiResponse unpinMessage(@RequestParam("chatId") final String chatId,
+                             @RequestParam("msgId") final long msgId) throws IOException;
 }
