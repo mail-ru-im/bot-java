@@ -15,6 +15,7 @@ import ru.mail.im.botapi.api.entity.EventRequest;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.response.ChatsGetAdminsResponse;
 import ru.mail.im.botapi.response.ChatsGetInfoResponse;
+import ru.mail.im.botapi.response.ChatsGetMembersResponse;
 import ru.mail.im.botapi.response.ChatsUsersResponse;
 import ru.mail.im.botapi.response.MessageResponse;
 import ru.mail.im.botapi.response.SelfGetResponse;
@@ -236,7 +237,7 @@ public class BotApiClientController {
         return client.chats().sendActions(chatId, actions);
     }
 
-    public ChatsGetAdminsResponse getChatMembers(String chatId) throws IOException {
+    public ChatsGetMembersResponse getChatMembers(String chatId) throws IOException {
         return client.chats().getMembers(chatId);
     }
 

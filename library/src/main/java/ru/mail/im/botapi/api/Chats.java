@@ -4,6 +4,7 @@ import ru.mail.im.botapi.api.entity.ChatMember;
 import ru.mail.im.botapi.entity.ChatAction;
 import ru.mail.im.botapi.response.ApiResponse;
 import ru.mail.im.botapi.response.ChatsGetAdminsResponse;
+import ru.mail.im.botapi.response.ChatsGetMembersResponse;
 import ru.mail.im.botapi.response.ChatsUsersResponse;
 import ru.mail.im.botapi.response.ChatsGetInfoResponse;
 import java.io.File;
@@ -35,7 +36,7 @@ public interface Chats {
     ChatsGetAdminsResponse getAdmins(@RequestParam("chatId") final String chatId) throws IOException;
 
     @GetRequest("chats/getMembers")
-    ChatsGetAdminsResponse getMembers(@RequestParam("chatId") final String chatId) throws IOException;
+    ChatsGetMembersResponse getMembers(@RequestParam("chatId") final String chatId) throws IOException;
 
     @GetRequest("/chats/getBlockedUsers")
     ChatsUsersResponse getBlockedUsers(@RequestParam("chatId") final String chatId) throws IOException;
