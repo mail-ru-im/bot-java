@@ -11,7 +11,7 @@ public class ChatsGetMembersResponse extends ApiResponse {
     @SerializedName("members")
     private List<Admin> members = Collections.emptyList();
 
-    public List<Admin> getAdmins() {
+    public List<Admin> getMembers() {
         return members;
     }
 

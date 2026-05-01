@@ -237,8 +237,8 @@ public class BotApiClientController {
         return client.chats().sendActions(chatId, actions);
     }
 
-    public ChatsGetMembersResponse getChatMembers(String chatId) throws IOException {
-        return client.chats().getMembers(chatId);
+    public ChatsGetMembersResponse getChatMembers(String chatId, String cursor) throws IOException {
+        return client.chats().getMembers(chatId, cursor);
     }
 
     public ChatsUsersResponse getChatBlockedUsers(String chatId) throws IOException {
@@ -249,8 +249,8 @@ public class BotApiClientController {
         return client.chats().getPendingUsers(chatId);
     }
 
-    public ApiResponse chatBlockUser(String chatId, String userId) throws IOException {
-        return client.chats().blockUser(chatId, userId);
+    public ApiResponse chatBlockUser(String chatId, String userId, boolean delLastMessages) throws IOException {
+        return client.chats().blockUser(chatId, userId, delLastMessages);
     }
 
     public ApiResponse chatUnblockUser(String chatId, String userId) throws IOException {

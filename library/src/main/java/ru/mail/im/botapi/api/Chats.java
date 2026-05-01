@@ -22,7 +22,7 @@ public interface Chats {
     @PostRequest("/chats/avatar/set")
     ApiResponse setAvatar(
             @RequestParam("chatId") final String chatId,
-            @RequestParam("members") final File avatar
+            @RequestParam("image") final File avatar
     ) throws IOException;
 
     @GetRequest("chats/sendActions")
@@ -36,7 +36,8 @@ public interface Chats {
     ChatsGetAdminsResponse getAdmins(@RequestParam("chatId") final String chatId) throws IOException;
 
     @GetRequest("chats/getMembers")
-    ChatsGetMembersResponse getMembers(@RequestParam("chatId") final String chatId) throws IOException;
+    ChatsGetMembersResponse getMembers(@RequestParam("chatId") final String chatId,
+                                       @RequestParam("cursor") final String cursor) throws IOException;
 
     @GetRequest("/chats/getBlockedUsers")
     ChatsUsersResponse getBlockedUsers(@RequestParam("chatId") final String chatId) throws IOException;
@@ -46,7 +47,8 @@ public interface Chats {
 
     @GetRequest("/chats/blockUser")
     ApiResponse blockUser(@RequestParam("chatId") final String chatId,
-                          @RequestParam("userId") final String userId) throws IOException;
+                          @RequestParam("userId") final String userId,
+                          @RequestParam("delLastMessages") boolean delLastMessages) throws IOException;
 
     @GetRequest("/chats/unblockUser")
     ApiResponse unblockUser(@RequestParam("chatId") final String chatId,
