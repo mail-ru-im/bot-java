@@ -7,6 +7,9 @@ import java.io.IOException;
 
 public interface Events {
 
+    /**
+     * @deprecated Use {@link Events#getEvents(long, int)}
+     */
     @Deprecated
     @GetRequest("events/get")
     ApiResponse fetchEvents() throws IOException;
