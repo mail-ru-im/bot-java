@@ -33,6 +33,16 @@ public interface Messages {
         @RequestParam("inlineKeyboardMarkup") final List<List<InlineKeyboardButton>> keyboard
     ) throws IOException;
 
+    @PostRequest("messages/sendVoice")
+    MessageResponse sendVoice(
+            @RequestParam("chatId") final String chatId,
+            @RequestParam("file") final File file,
+            @RequestParam("replyMsgId") final long[] replyMsgId,
+            @RequestParam("forwardChatId") final String forwardChatId,
+            @RequestParam("forwardMsgId") final long[] forwardMsgId,
+            @RequestParam("inlineKeyboardMarkup") final List<List<InlineKeyboardButton>> keyboard
+    ) throws IOException;
+
     @GetRequest("messages/editText")
     ApiResponse editText(
         @RequestParam("chatId") final String chatId,
@@ -42,7 +52,6 @@ public interface Messages {
         @RequestParam("parseMode") final String parseMode,
         @RequestParam("inlineKeyboardMarkup") final List<List<InlineKeyboardButton>> keyboard
     ) throws IOException;
-
 
     @GetRequest("messages/deleteMessages")
     ApiResponse deleteMessages(
